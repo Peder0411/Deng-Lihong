@@ -1,0 +1,15 @@
+spring:
+  mail:
+    host: smtp.qq.com
+    username: 2629016097@qq.com
+    password: "xxcenfbalfoydhij"
+    port: 465
+    default-encoding: UTF-8
+    protocol: smtps
+    properties:
+      "mail.smtp.connectiontimeout": 5000
+      "mail.smtp.timeout": 3000
+      "mail.smtp.writetimeout": 5000
+      "mail.smtp.auth": true
+      "mail.smtp.starttls.enable": true
+      "mail.smtp.starttls.required": true

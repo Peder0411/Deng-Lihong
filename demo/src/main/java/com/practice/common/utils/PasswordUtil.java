@@ -96,7 +96,7 @@ public class PasswordUtil {
 
     public static void main(String[] args) {
 //        String password = "cndsHFHknvildhnoiseygh/;'.''..";
-        String password = "5564";
+        String password ="123";
         String encode = encodeDefaultSalt(password);
         System.out.println(encode);
         System.out.println(match(password, encode));

@@ -25,7 +25,6 @@
 			<version>1.4.12</version>
 		</dependency>
 
-
 		<!--spring mvc依赖-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -119,6 +118,12 @@
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus-extension</artifactId>
 			<version>3.4.1</version>
+		</dependency>
+
+		<!-- 发送邮件 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
 

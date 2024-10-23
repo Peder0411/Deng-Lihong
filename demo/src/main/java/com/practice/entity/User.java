@@ -37,4 +37,5 @@ public class User implements Serializable {
     private String address;
     private String post;
     private String status;
+    private String name;
 }

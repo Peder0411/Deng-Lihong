@@ -63,8 +63,6 @@
       </el-col>
   </div>
 </template>
-
-
 <script>
 import axios from 'axios';
 export default {
@@ -96,13 +94,13 @@ export default {
           this.dishes = res.data.data;
           this.$message({
             message: '成功',
-            type: 'info'
+            type: 'success'
           });
         
         } else {
           this.$message({
             message: '失败',
-            type: 'info'
+            type: 'error'
           });
         }
       });
