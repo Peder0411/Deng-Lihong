@@ -2,6 +2,7 @@ package com.practice.controller;
 
 
 import com.practice.common.result.ResultUtils;
+import com.practice.service.IMailService;
 import com.practice.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,10 @@ public class UserController {
 
     @Autowired
     private IUserService iUserService;
+
+    @Autowired
+    private IMailService iMailService;
+
 
     //分页查询
     @GetMapping("/getAllUser")
@@ -57,11 +62,12 @@ public Object selectByConditions(@RequestBody Map<String, String> selectConditio
 
 }
 //发送邮件
-    @GetMapping("/sendMail")
-    public Object sendMail(@RequestParam String email){
-        boolean flag =iUserService.sendMail(email);
-        return ResultUtils.returnDataSuccess(flag);
-    }
+@PostMapping("/sendMail")
+public Object sendMail(@RequestBody Map<String, String> sendData) {
+    String email = sendData.get("email");
+    boolean flag = iMailService.sendMail(email);
+    return ResultUtils.returnDataSuccess(flag);
+}
 
 
 //找回密码
@@ -69,8 +75,8 @@ public Object selectByConditions(@RequestBody Map<String, String> selectConditio
     public Object rePassword(@RequestBody Map <String, String> rePasswordCondition){
         String email = rePasswordCondition.get("email");
         String password =rePasswordCondition.get("password");
-        int emailCode =Integer.parseInt(rePasswordCondition.get("emailCode"));
-        return null;
+        int mailCode =Integer.parseInt(rePasswordCondition.get("mailCode"));
+        String site = iUserService.rePassword(email,password,mailCode);
+        return ResultUtils.returnDataSuccess(site);
     }
-
 }

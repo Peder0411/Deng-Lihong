@@ -24,11 +24,7 @@ public interface IUserService extends IService<User> {
       //分页查询
       Map<String, Object> selectByCondition(int currentPage, int pageSize, String name, String post);
 
-      //发送邮件
-      public boolean sendMail(String email) ;
-      public  String getTemporaryStorage();
-
       //找回密码
-      public String rePassword(String email,String password, int emailCode);
+      public String rePassword(String email,String password, int mailCode);
 
 }

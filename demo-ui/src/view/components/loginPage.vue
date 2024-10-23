@@ -25,12 +25,12 @@
         
         <!-- 手机号输入框 -->
         <el-form-item>
-          <el-input v-model="registerForm.phone" placeholder="请输入邮箱" prefix-icon="el-icon-mobile-phone"></el-input>
+          <el-input v-model="registerForm.email" placeholder="请输入邮箱" prefix-icon="el-icon-mobile-phone"></el-input>
         </el-form-item>
         
         <!-- 短信验证码输入框和获取验证码按钮 -->
         <el-form-item>
-          <el-input v-model="registerForm.smsCode" placeholder="请输入邮箱验证码" prefix-icon="el-icon-key">
+          <el-input v-model="registerForm.mailCode" placeholder="请输入邮箱验证码" prefix-icon="el-icon-key">
             <template slot="append">
               <el-button type="primary" @click="getSmsCode">获取验证码</el-button>
             </template>
@@ -46,10 +46,10 @@
         <el-form-item>
           <el-input type="password" v-model="registerForm.confirmPassword" placeholder="请确认密码" prefix-icon="el-icon-lock"></el-input>
         </el-form-item>
-
-        <!-- 弹窗底部按钮 -->
-      
       </el-form>
+
+
+       <!-- 弹窗底部按钮 -->
       <div style="text-align: right; margin-top: 20px;">
     <el-button @click="forgotPasswordDialog = false">取消</el-button>
     <el-button type="primary" @click="resetPassword">提交</el-button>
@@ -69,8 +69,8 @@
           rememberMe: false
         },
         registerForm: {
-        phone: '',
-        smsCode: '',
+        email: '',
+        mailCode: '',
         password: '',
         confirmPassword: ''
       },
@@ -103,11 +103,40 @@
       this.forgotPasswordDialog = true; // 显示弹窗
     },
     getSmsCode() {
-      // 获取验证码逻辑
+    const sendData ={
+      email:this.registerForm.email
+    };
       console.log("获取验证码");
-    },
+      axios.post("http://localhost:80/user/sendMail",sendData)
+      .then(res =>{
+        if(res.data.code ==="200"){
+          this.$message({
+            message: '成功',
+            type: 'success'
+          });
+        }else{
+          this.$message({
+            message: '失败',
+            type: 'error'
+          });
+        }
+      })
+      },
     resetPassword() {
-      // 提交重置密码的逻辑
+      axios.post("http://localhost:80/user/rePassword",this.registerForm)
+      .then(res =>{
+        if(res.data.code ==="200"){
+          this.$message({
+            message: '成功',
+            type: 'success'
+          });
+        }else{
+          this.$message({
+            message: '失败',
+            type: 'error'
+          });
+        }
+      })
       console.log("提交重置密码");
       this.forgotPasswordDialog = false; // 重置后关闭弹窗
     }

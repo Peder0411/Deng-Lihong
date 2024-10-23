@@ -1,11 +1,13 @@
 package com.practice.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.practice.common.utils.PasswordUtil;
 import com.practice.entity.User;
 import com.practice.mapper.UserMapper;
+import com.practice.service.IMailService;
 import com.practice.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +31,10 @@ import java.util.Map;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     @Autowired
     private UserMapper userMapper;
-    JavaMailSender javaMailSender;
 
-    private String temporaryStorage;
+    @Autowired
+    private IMailService iMailService;
+
 
 //登录
     @Override
@@ -62,7 +65,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public Map<String, Object> selectByCondition(int currentPage, int pageSize, String name, String post) {
         // 创建分页对象
         Page<User> page = new Page<>(currentPage, pageSize);
-
         // 创建查询条件
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         if (name != null && !name.isEmpty()) {
@@ -71,7 +73,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (post != null && !post.isEmpty()) {
             queryWrapper.eq(User::getPost, post);
         }
-
         // 执行分页查询
         IPage<User> resultPage = this.page(page, queryWrapper);
 
@@ -82,35 +83,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return result;
     }
         //发邮件
-    @Override
-    public boolean sendMail(String email) {
-        try {
-            MimeMessage message = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, false);
-            helper.setFrom("2629016097@qq.com", "xxcenfbalfoydhij");
-            helper.setTo(email);
-            String random = ""+Math.random();
-            String substring = random.substring(random.length()-4);
-            helper.setSubject(substring);
-            helper.setText(substring, true);
-            javaMailSender.send(message);
-            temporaryStorage = substring;
-            return true;
-        }catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+
+
 
     //找回密码
     @Override
-    public String rePassword(String email, String password, int emailCode) {
+    public String rePassword(String email, String password, int mailCode) {
+      String storedCode = iMailService.getTemporaryStorage();
+        System.out.println(storedCode);
+        System.out.println(mailCode);
+        if (storedCode== null|| !storedCode.equals(String.valueOf(mailCode))) {
+            return "验证码不正确或已过期";
+        }
 
-    }
-
-    @Override
-    public String getTemporaryStorage() {
-        return temporaryStorage;
+        User user = userMapper.selectEmail(email);
+        if (user == null) {
+            return "该邮箱未注册";
+        }
+        String encryptedPassword =PasswordUtil.encodeDefaultSalt(password);  // 加密密码
+        user.setPassword(encryptedPassword);
+        userMapper.updateById(user);
+        return "密码重置成功";
     }
 
 

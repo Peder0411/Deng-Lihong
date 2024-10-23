@@ -1,5 +1,6 @@
 package com.practice.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.practice.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -18,4 +19,8 @@ import org.apache.ibatis.annotations.Select;
 public interface UserMapper extends BaseMapper<User> {
 
     User selectOne(@Param("username") String username,@Param("password") String password);
+
+
+
+    User selectEmail(@Param("email") String email);
 }
