@@ -5,6 +5,7 @@ import DishItem from '@/view/components/dishItem.vue';
 import TableManagement from '@/view/components/TableManagement.vue';
 import UserManagement from '@/view/components/UserManagement.vue';
 import loginPage from '@/view/components/loginPage.vue';
+import AddDish from '@/view/components/AddDish.vue';
 
 Vue.use(VueRouter);
 
@@ -42,7 +43,14 @@ const routes = [
     name: 'UserManagement',
     component: UserManagement,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/AddDish',
+    name: 'AddDish',
+    component:AddDish ,
+    meta: { requiresAuth: true }
   }
+
 ];
 
 const router = new VueRouter({

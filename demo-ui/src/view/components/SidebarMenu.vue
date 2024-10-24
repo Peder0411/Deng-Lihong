@@ -16,7 +16,7 @@
       <el-submenu index="3">
         <template slot="title">菜单管理</template>
         <el-menu-item index="3-1"  @click="goToDishManagement">菜品管理</el-menu-item>
-        <el-menu-item index="3-2">分类管理</el-menu-item>
+        <el-menu-item index="3-2"  @click="goToAddDish">添加菜品</el-menu-item>
       </el-submenu>
       <el-submenu index="4">
         <template slot="title">台桌管理</template>
@@ -63,6 +63,13 @@
     this.$forceUpdate();
   } else {
     this.$router.push('/UserManagement');
+  }
+    },
+    goToAddDish(){
+      if (this.$route.path === '/AddDish') {
+    this.$forceUpdate();
+  } else {
+    this.$router.push('/AddDish');
   }
     }
   }

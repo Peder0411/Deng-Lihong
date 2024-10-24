@@ -12,3 +12,4 @@ spring:
       mail.smtp.writetimeout: 5000
       mail.smtp.auth: true
       mail.smtp.ssl.enable: true  # 添加这一行以启用SSL
+
