@@ -51,15 +51,14 @@
         </el-table>
 
         <!-- 分页 -->
-        <div class="pagination">
-          <el-pagination
-            background
-            layout="total, prev, pager, next"
-            :total="dishes.length"
-            :page-size="10"
-            @current-change="handlePageChange"
-          ></el-pagination>
-        </div>
+        <el-pagination
+      background
+      layout="prev, pager, next, jumper"
+      :total="totalOrders"
+      :current-page="currentPage"
+      :page-size="pageSize"
+      @current-change="handlePageChange">
+    </el-pagination>
       </el-col>
   </div>
 </template>
@@ -82,16 +81,23 @@ export default {
         { id: 1000001, name: '宫保鸡丁', price: '¥100.00', image: '', tag: { upper: false, recommend: false }, order: 1, stock: 100, soldOut: false },
         // 更多菜品
       ],
-      total: 135 // 总菜品数量
+      total: 135 ,// 总菜品数量
+      currentPage: 1,
+      pageSize: 10,
     }
   },
   methods: {
     //查询所有菜品
     selectAllDish() {
-    axios.get("http://localhost:80/dish/getAll")
+      const params ={
+      page: this.currentPage,
+      limit: this.pageSize
+    }
+    axios.get("http://localhost:80/dish/getAll",{params})
       .then((res) => {
-        if (res.data.code === "200") {
+        if (res.data.code === "0") {
           this.dishes = res.data.data;
+          this.total = res.data.count; 
           this.$message({
             message: '成功',
             type: 'success'
@@ -109,9 +115,9 @@ export default {
       // 查询逻辑
     },
     handlePageChange(page) {
-    // eslint-disable-next-line
-    console.log("当前页:", page);
-  },
+      this.currentPage = page;
+      this.selectAllDish();
+    },
   view(row) {
     // eslint-disable-next-line
     console.log("查看", row);

@@ -6,6 +6,7 @@ import TableManagement from '@/view/components/TableManagement.vue';
 import UserManagement from '@/view/components/UserManagement.vue';
 import loginPage from '@/view/components/loginPage.vue';
 import AddDish from '@/view/components/AddDish.vue';
+import IOrderManagement from '@/view/components/IOrderManagement.vue';
 
 Vue.use(VueRouter);
 
@@ -48,6 +49,12 @@ const routes = [
     path: '/AddDish',
     name: 'AddDish',
     component:AddDish ,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/IOrderManagement',
+    name: 'IOrderManagement',
+    component:IOrderManagement ,
     meta: { requiresAuth: true }
   }
 

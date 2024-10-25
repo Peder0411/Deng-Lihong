@@ -27,7 +27,7 @@
       <el-menu-item index="5" @click="goToUserManagement">员工管理</el-menu-item>
       <el-submenu index="6">
         <template slot="title">订单管理</template>
-        <el-menu-item index="6-1">订单列表</el-menu-item>
+        <el-menu-item index="6-1" @click="goToOrderManagement">订单列表</el-menu-item>
         <el-menu-item index="6-2">订单统计</el-menu-item>
       </el-submenu>
     </el-menu>
@@ -70,6 +70,13 @@
     this.$forceUpdate();
   } else {
     this.$router.push('/AddDish');
+  }
+    },
+    goToOrderManagement(){
+      if (this.$route.path === '/IOrderManagement') {
+    this.$forceUpdate();
+  } else {
+    this.$router.push('/IOrderManagement');
   }
     }
   }

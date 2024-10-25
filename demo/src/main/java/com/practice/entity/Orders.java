@@ -16,14 +16,14 @@ import lombok.experimental.Accessors;
  * 
  * </p>
  *
- * @author liruirui
- * @since 2024-10-16
+ * @author demo
+ * @since 2024-10-25
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="Order对象", description="")
-public class Order implements Serializable {
+@ApiModel(value="Orders对象", description="")
+public class Orders implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
