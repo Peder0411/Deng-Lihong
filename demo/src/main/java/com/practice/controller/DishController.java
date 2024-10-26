@@ -1,6 +1,7 @@
 package com.practice.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -8,11 +9,13 @@ import com.github.yulichang.toolkit.support.IdeaProxyLambdaMeta;
 import com.practice.common.result.ResultUtils;
 import com.practice.common.utils.EmptyUtils;
 import com.practice.entity.Dish;
+import com.practice.entity.User;
 import com.practice.service.IDishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -41,31 +44,35 @@ public class DishController {
         return ResultUtils.returnSuccessLayui(list,total);
     }
 
+
     //添加菜单
     @PostMapping("/addDish")
     public Object addDish(@RequestBody Dish dish){
         boolean flag = iDishService.save(dish);
         return ResultUtils.returnDataSuccess(flag);
     }
-    //查询菜单
-    @GetMapping("/selectDish")
-    public Object selectDish(@RequestParam Integer page, @RequestParam Integer limit, Dish dish){
-        IPage p =new Page(page,limit);
+    //条件查询
+    @PostMapping("/selectDish")
+    public Object selectDish(@RequestParam Integer page, @RequestParam Integer limit,@RequestBody Map<String, String> selectConditions) {
+        String dishName =selectConditions.get("dishName");
+        String kind = selectConditions.get("kind");
 
-        QueryWrapper queryWrapper =new QueryWrapper();
-        if (EmptyUtils.isNotEmpty(dish.getDishName())) {
-            queryWrapper.like("DishName",dish.getDishName());
-        }
-        if (EmptyUtils.isNotEmpty(dish.getKind())){
-            queryWrapper.eq("kind",dish.getKind());
-        }
-        queryWrapper.orderByDesc("id");
+        IPage <Dish> p =new Page(page,limit);
 
-        IPage res = iDishService.page(p,queryWrapper);
-        List list =res.getRecords();
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        if (dishName != null && !dishName.isEmpty()) {
+            queryWrapper.eq(Dish::getDishName, dishName);
+        }
+        if (kind != null && !kind.isEmpty()) {
+            queryWrapper.eq(Dish::getKind, kind);
+        }
+        IPage <Dish> res = iDishService.page(p,queryWrapper);
+        List  <Dish> list =res.getRecords();
         int total = (int) res.getTotal();
         return ResultUtils.returnSuccessLayui(list,total);
     }
+
+
     //删除菜单
     @DeleteMapping("/delete/{id}")
     public Object deleteDish(@PathVariable int id){
@@ -77,6 +84,19 @@ public class DishController {
      public Object update(@RequestBody Dish dish){
         boolean flag = iDishService.updateById(dish);
         return ResultUtils.returnDataSuccess(flag);
+    }
+    //监控菜品状态
+    @PutMapping("/updateById")
+    public Object updateById(@RequestParam int id, @RequestParam String  status) {
+        Dish dish = iDishService.getById(id);
+        if (dish != null) {
+            dish.setStatus(status);
+
+            boolean flag = iDishService.updateById(dish);
+            return ResultUtils.returnDataSuccess(flag);
+        } else {
+            return false;
+        }
     }
 }
 

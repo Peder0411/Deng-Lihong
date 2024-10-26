@@ -2,6 +2,7 @@ package com.practice.controller;
 
 
 import com.practice.common.result.ResultUtils;
+import com.practice.entity.User;
 import com.practice.service.IMailService;
 import com.practice.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,5 +79,11 @@ public Object sendMail(@RequestBody Map<String, String> sendData) {
         int mailCode =Integer.parseInt(rePasswordCondition.get("mailCode"));
         String site = iUserService.rePassword(email,password,mailCode);
         return ResultUtils.returnDataSuccess(site);
+    }
+    //添加用户
+    @PostMapping("/addUser")
+    public Object addUser(@RequestBody User user){
+        boolean flag = iUserService.save(user);
+        return ResultUtils.returnDataSuccess(flag);
     }
 }

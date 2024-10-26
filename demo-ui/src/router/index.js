@@ -7,6 +7,7 @@ import UserManagement from '@/view/components/UserManagement.vue';
 import loginPage from '@/view/components/loginPage.vue';
 import AddDish from '@/view/components/AddDish.vue';
 import IOrderManagement from '@/view/components/IOrderManagement.vue';
+import AddUser from '@/view/components/AddUser.vue';
 
 Vue.use(VueRouter);
 
@@ -56,8 +57,13 @@ const routes = [
     name: 'IOrderManagement',
     component:IOrderManagement ,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/AddUser',
+    name: 'AddUser',
+    component:AddUser ,
+    meta: { requiresAuth: true }
   }
-
 ];
 
 const router = new VueRouter({
