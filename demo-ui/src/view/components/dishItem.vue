@@ -80,11 +80,6 @@ export default {
   name:'dishItem',
   data() {
     return {
-      tableData: [
-        { id: 1, status: 1 }, // 1 表示上架
-        { id: 2, status: 0 }, // 0 表示下架
-        // 其他数据...
-      ],
       filters: {
         name: '',
         category: ''
@@ -145,7 +140,10 @@ axios.post(`http://localhost:80/dish/selectDish?page=${this.currentPage}&limit=$
     })
       .then((res) => {
         if (res.data.code === "0") {
-          this.dishes = res.data.data;
+          this.dishes = res.data.data.map(dish => ({
+        ...dish,
+        status: Number(dish.status) // 转换 status 为数字类型
+      }));
           this.total = res.data.count; 
           this.$message({
             message: '成功',
@@ -178,23 +176,32 @@ axios.post(`http://localhost:80/dish/selectDish?page=${this.currentPage}&limit=$
     console.log("删除", row);
   },
   handleStatusChange(row) {
+    this.dishes.id = row.id;
+    this.dishes.status = row.status;
       // 根据切换的状态，进行相应的处理，比如更新数据库
-      const newStatus = row.status; // 1 或 0
-      console.log(`Table ID: ${row.id}, New Status: ${newStatus}`);
-      
-      // 这里可以调用 API 更新数据库中的状态
-      // 例如：
-      // this.updateStatusInDatabase(row.id, newStatus);
+
+      this.updateStatusInDatabase();
     },
     updateStatusInDatabase() {
-      // 这里写你的 API 调用逻辑
-      // axios.post('/api/update-status', { id, status })
-      //   .then(response => {
-      //     console.log('状态更新成功', response);
-      //   })
-      //   .catch(error => {
-      //     console.error('状态更新失败', error);
-      //   });
+      axios.put(`http://localhost:80/dish/updateById?id=${this.dishes.id}&status=${this.dishes.status}`, null, {
+  headers: {
+    "Content-Type": "application/json"
+  }
+})
+     .then(res =>{
+        if(res.data.code ==="200"){
+          this.selectAllDish()
+          this.$message({
+            message: '成功',
+            type: 'success'
+          });
+        }else{
+          this.$message({
+            message: '失败',
+            type: 'error'
+          });
+        }
+      })
     }
   },
   mounted(){

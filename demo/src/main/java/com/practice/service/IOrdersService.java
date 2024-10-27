@@ -16,6 +16,8 @@ import java.util.List;
  */
 public interface IOrdersService extends IService<Orders> {
 
-    List<OrderTableInfoDTO> getOrderWithTableInfo(int offset, int limit);
+    List<OrderTableInfoDTO> selectAll(int offset, int limit);
     int countOrders();
+
+    List <OrderTableInfoDTO> selectByConditions(OrderTableInfoDTO orderTableInfoDTO);
 }

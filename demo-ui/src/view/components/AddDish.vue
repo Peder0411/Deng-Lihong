@@ -45,8 +45,8 @@
 
       <el-form-item label="状态" prop="status">
         <el-select v-model="form.status" placeholder="请选择状态">
-          <el-option label="售罄" value="售罄"></el-option>
-          <el-option label="有货" value="有货"></el-option>
+          <el-option label="上架" value="1"></el-option>
+          <el-option label="下架" value="0"></el-option>
         </el-select>
       </el-form-item>
 

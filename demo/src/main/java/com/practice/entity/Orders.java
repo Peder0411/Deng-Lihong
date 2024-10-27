@@ -40,11 +40,11 @@ public class Orders implements Serializable {
 
     private Integer status;
 
-    private LocalDateTime orderTime;
+    private String orderTime;
 
-    private LocalDateTime paymentTime;
+    private String  paymentTime;
 
-    private LocalDateTime completionTime;
+    private String  completionTime;
 
     private String notes;
 

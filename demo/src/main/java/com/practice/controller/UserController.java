@@ -2,6 +2,7 @@ package com.practice.controller;
 
 
 import com.practice.common.result.ResultUtils;
+import com.practice.entity.Dish;
 import com.practice.entity.User;
 import com.practice.service.IMailService;
 import com.practice.service.IUserService;
@@ -85,5 +86,18 @@ public Object sendMail(@RequestBody Map<String, String> sendData) {
     public Object addUser(@RequestBody User user){
         boolean flag = iUserService.save(user);
         return ResultUtils.returnDataSuccess(flag);
+    }
+    //监控员工状态
+    @PutMapping("/updateById")
+    public Object updateById(@RequestParam int id, @RequestParam String  status) {
+      User user = iUserService.getById(id);
+        if (user != null) {
+            user.setStatus(status);
+
+            boolean flag = iUserService.updateById(user);
+            return ResultUtils.returnDataSuccess(flag);
+        } else {
+            return false;
+        }
     }
 }

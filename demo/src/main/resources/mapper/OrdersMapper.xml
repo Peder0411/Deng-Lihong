@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.practice.mapper.OrdersMapper">
 
-    <select id="getOrderWithTableInfoPaged" resultType="com.practice.entity.OrderTableInfoDTO">
+    <select id="selectAll" resultType="com.practice.entity.OrderTableInfoDTO">
         SELECT
             o.id AS orderId,
             o.table_id AS tableId,
@@ -25,5 +25,32 @@
             ON
                 o.table_id = t.id
             LIMIT #{offset}, #{limit}
+    </select>
+    <select id="selectByConditios" resultType="com.practice.entity.OrderTableInfoDTO">
+        SELECT
+            o.id,
+            o.table_id AS tableId,
+            o.people_count AS peopleCount,
+            o.waiter,
+            o.total_amount AS totalAmount,
+            o.status,
+            o.order_time AS orderTime,
+            o.payment_time AS paymentTime,
+            o.completion_time AS completionTime,
+            o.notes,
+            t.table_number AS tableNumber,
+            t.table_image AS tableImage,
+            t.table_address AS tableAddress,
+            t.table_type AS tableType
+        FROM
+            orders o
+                JOIN
+            table_info t ON o.table_id = t.id
+        WHERE
+            o.status = #{orderTableInfoDTO.status}
+          AND o.order_time = #{orderTableInfoDTO.orderTime}
+          AND o.completion_time = #{orderTableInfoDTO.completionTime}
+          AND t.table_number = #{orderTableInfoDTO.tableNumber};
+
     </select>
 </mapper>

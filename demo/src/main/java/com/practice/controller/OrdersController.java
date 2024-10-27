@@ -1,25 +1,13 @@
 package com.practice.controller;
 
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.practice.common.result.ResultUtils;
 import com.practice.entity.OrderTableInfoDTO;
-import com.practice.entity.Orders;
-import com.practice.entity.TableInfo;
 import com.practice.service.IOrdersService;
-import com.practice.service.ITableInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -44,7 +32,7 @@ public class OrdersController {
         int offset = (page - 1) * limit;
 
         // 查询指定范围内的订单及餐桌信息
-        List<OrderTableInfoDTO> list = iOrdersService.getOrderWithTableInfo(offset, limit);
+        List<OrderTableInfoDTO> list = iOrdersService.selectAll(offset, limit);
 
         // 获取总数
         int total = iOrdersService.countOrders();
@@ -53,4 +41,10 @@ public class OrdersController {
         return ResultUtils.returnSuccessLayui(list, total);
     }
 
+    //条件查询
+    @PostMapping("/selectByConditions")
+    public Object selectByConditions(@RequestBody OrderTableInfoDTO orderTableInfoDTO){
+        List<OrderTableInfoDTO> results = iOrdersService.selectByConditions(orderTableInfoDTO);
+        return ResultUtils.returnDataSuccess(results);
+    }
 }

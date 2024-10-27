@@ -25,11 +25,20 @@
       <el-table-column prop="email" label="邮箱"></el-table-column>
       <el-table-column prop="phone" label="电话号码"></el-table-column>
       <el-table-column prop="address" label="地址"></el-table-column>
-      <el-table-column prop="status" label="状态" width="120">
-        <template slot-scope="scope">
-          <el-switch v-model="scope.row.status" @change="handleStatusChange(scope.row)"></el-switch>
-        </template>
-      </el-table-column>
+      <el-table-column label="是否在职" width="100">
+          <template v-slot="scope">
+            <el-switch
+              v-model="scope.row.status"
+              :active-value="1"
+              :inactive-value="0"
+              @change="handleStatusChange(scope.row)"
+            >
+              <span class="switch-text active-text">在职</span>
+              <span class="switch-text inactive-text">请假</span>
+            </el-switch>
+          </template>
+        </el-table-column>
+h
       <el-table-column label="操作" width="180">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
@@ -75,7 +84,10 @@ export default {
     })
       .then((res) => {
         if (res.data.code === "200") {
-          this.employees = res.data.data.data;
+          this.employees = res.data.data.data.map(user => ({
+        ...user,
+        status: Number(user.status) // 转换 status 为数字类型
+      }));
           this.total = res.data.data.total; 
           this.$message({
             message: '成功',
@@ -106,7 +118,10 @@ export default {
       })
       .then((res) => {
         if (res.data.code === "200") {
-          this.employees = res.data.data.data;
+          this.employees = res.data.data.data.map(user => ({
+        ...user,
+        status: Number(user.status) // 转换 status 为数字类型
+      }));
           this.total = res.data.data.total; 
           this.$message({
             message: '成功',
@@ -146,10 +161,6 @@ export default {
         }
       });
     },
-    handleStatusChange(row) {
-      // 处理启用状态切换
-      console.log('状态变化:', row);
-    },
     handleSizeChange(size) {
       this.pageSize = size;
       this.selectAllUser()
@@ -158,6 +169,32 @@ export default {
       this.currentPage = page;
       this.selectAllUser()
     },
+    handleStatusChange(row) {
+    this.employees.id = row.id;
+    this.employees.status = row.status;
+      this.updateStatusInDatabase();
+    },
+    updateStatusInDatabase() {
+      axios.put(`http://localhost:80/user/updateById?id=${this.employees.id}&status=${this.employees.status}`, null, {
+  headers: {
+    "Content-Type": "application/json"
+  }
+})
+     .then(res =>{
+        if(res.data.code ==="200"){
+          this.selectAllUser()
+          this.$message({
+            message: '成功',
+            type: 'success'
+          });
+        }else{
+          this.$message({
+            message: '失败',
+            type: 'error'
+          });
+        }
+      })
+    }
   },
     mounted(){
       this.selectAllUser()
@@ -168,5 +205,25 @@ export default {
 <style scoped>
 .demo-form-inline {
   margin-bottom: 20px;
+}
+.switch-text {
+  display: inline-block;            /* 让文本块显示为行内块元素 */
+  transform: rotate(90deg);        /* 旋转 90 度 */
+  transform-origin: left bottom;    /* 旋转的基点 */
+  white-space: nowrap;              /* 不换行 */
+  margin: 0 5px;                   /* 添加适当的左右间距 */
+  font-size: 12px;                  /* 根据需要调整字体大小 */
+  color: #409EFF;                   /* 根据需要调整字体颜色 */
+}
+
+.el-switch__label {
+  display: none;                    /* 隐藏原本的标签 */
+}
+.switch-text {
+  display: none;
+}
+.el-switch.is-active .active-text,
+.el-switch:not(.is-active) .inactive-text {
+  display: inline;
 }
 </style>

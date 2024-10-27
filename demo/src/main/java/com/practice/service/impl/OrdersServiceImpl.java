@@ -25,14 +25,20 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     @Autowired
     private OrdersMapper ordersMapper;
     @Override
-    public List<OrderTableInfoDTO> getOrderWithTableInfo(int offset, int limit) {
-        // 在 XML 中定义分页查询，传入 offset 和 limit
-        return ordersMapper.getOrderWithTableInfoPaged(offset, limit);
+    public List<OrderTableInfoDTO> selectAll(int offset, int limit) {
+        return ordersMapper.selectAll(offset, limit);
     }
 
     @Override
     public int countOrders() {
         // 获取订单总数
         return ordersMapper.selectCount(null);
+    }
+
+
+    //条件查询
+    @Override
+    public List<OrderTableInfoDTO> selectByConditions(OrderTableInfoDTO orderTableInfoDTO) {
+        return ordersMapper.selectByConditios(orderTableInfoDTO);
     }
 }
