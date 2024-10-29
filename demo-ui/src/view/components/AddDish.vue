@@ -22,11 +22,6 @@
           <img width="100%" :src="dialogImageUrl" alt="">
         </el-dialog>
       </el-form-item>
-
-      <el-form-item label="价格" prop="price">
-        <el-input v-model="form.price" placeholder="请输入价格" type="number"></el-input>
-      </el-form-item>
-
       <el-form-item label="类型" prop="kind">
         <el-input v-model="form.kind" placeholder="请输入菜品类型"></el-input>
       </el-form-item>

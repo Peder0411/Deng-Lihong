@@ -45,18 +45,20 @@
       <el-table-column prop="tableType" label="桌型" width="100"></el-table-column>
       <el-table-column prop="status" label="桌台状态" width="120">
         <template slot-scope="scope">
-  <span :style="{ color: scope.row.status === '使用中' ? 'red' : (scope.row.status === '空闲' ? 'green' : 'black') }">
-    {{ scope.row.status }}
-  </span>
+  <el-tag :type="scope.row.status === 1 ? 'success' : 'warning'">
+    {{ scope.row.status === 1 ? '使用中' : '空闲' }}
+  </el-tag>
 </template>
       </el-table-column>
-      <el-table-column label="操作" width="180">
-        <template slot-scope="scope">
-          <el-button type="text" size="small" @click="handleView(scope.row)">查看</el-button>
-          <el-button type="text" size="small" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button type="text" size="small" @click="handleDelete(scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
+      <el-table-column label="操作" width="200" align="center">
+  <template slot-scope="scope">
+    <div style="display: flex; gap: 4px;">
+      <el-button type="success" size="mini" @click="handleView(scope.row)">查看</el-button>
+      <el-button type="warning" size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+      <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
+    </div>
+  </template>
+</el-table-column>
     </el-table>
 
     <!-- 分页组件 -->

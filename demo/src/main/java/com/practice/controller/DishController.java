@@ -14,6 +14,7 @@ import com.practice.service.IDishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,16 @@ public class DishController {
     //添加菜单
     @PostMapping("/addDish")
     public Object addDish(@RequestBody Dish dish){
+        BigDecimal originalPrice= dish.getOriginalPrice();
+        String discountStr =dish.getDiscount();
+        BigDecimal discount = new BigDecimal(discountStr.replace("折", "")); // 去掉“折”
+        discount = discount.divide(new BigDecimal(10)); // 转换为小数
+
+        // 计算现价
+        BigDecimal price = originalPrice.multiply(discount); // 现价 = 原价 * 折扣
+
+        // 设置现价
+        dish.setPrice(price);
         boolean flag = iDishService.save(dish);
         return ResultUtils.returnDataSuccess(flag);
     }

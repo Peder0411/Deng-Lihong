@@ -27,6 +27,7 @@ public class OrderTableInfoDTO {
     private String notes;
 
     // TableInfo 字段
+    private Integer id;
     private String tableNumber;
     private String tableImage;
     private String tableAddress;

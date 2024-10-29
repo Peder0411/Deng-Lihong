@@ -12,5 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2024-10-16
  */
 public interface TableInfoMapper extends BaseMapper<TableInfo> {
+    //查询更改状态
+
 
 }

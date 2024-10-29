@@ -2,15 +2,15 @@
     <div class="order-page">
       <!-- 过滤条件 -->
       <el-form :inline="true" :model="filterForm" class="filter-form">
-        <el-form-item label="下单时间">
-          <el-date-picker
-            v-model="filterForm.orderTime"
-            type="daterange"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            format="yyyy-MM-dd">
-          </el-date-picker>
-        </el-form-item>
+  <el-form-item label="下单时间">
+    <el-date-picker
+      v-model="filterForm.orderTime"
+      type="datetime"  
+      placeholder="选择日期时间"
+      format="yyyy-MM-dd HH:mm:ss"  
+      value-format="yyyy-MM-dd HH:mm:ss" 
+    ></el-date-picker>
+  </el-form-item>
         
         <el-form-item label="桌号">
           <el-input v-model="filterForm.tableNumber" placeholder="请输入桌号"></el-input>
@@ -18,9 +18,8 @@
   
         <el-form-item label="订单状态">
           <el-select v-model="filterForm.status" placeholder="请选择">
-            <el-option label="全部" value=""></el-option>
-            <el-option label="已结账" value="paid"></el-option>
-            <el-option label="未结账" value="unpaid"></el-option>
+            <el-option label="已结账" value="1"></el-option>
+            <el-option label="未结账" value="0"></el-option>
           </el-select>
         </el-form-item>
   
@@ -43,19 +42,23 @@
         <el-table-column prop="orderTime" label="下单时间" width="130"></el-table-column>
         <el-table-column prop="paymentTime" label="支付时间" width="130"></el-table-column>
         <el-table-column prop="completionTime" label="完成时间" width="130"></el-table-column>
-        <el-table-column prop="notes" label="备注" width="100"></el-table-column>
-        <el-table-column prop="status" label="订单状态" width="100">
+        <el-table-column prop="notes" label="备注" width="80"></el-table-column>
+        <el-table-column prop="status" label="订单状态" width="80">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.status === 'paid' ? 'success' : 'warning'">
-              {{ scope.row.status === 'paid' ? '已结账' : '未结账' }}
-            </el-tag>
-          </template>
+  <el-tag :type="scope.row.status === 1 ? 'success' : 'warning'">
+    {{ scope.row.status === 1 ? '已结账' : '未结账' }}
+  </el-tag>
+</template>
         </el-table-column>
-        <el-table-column label="操作" width="100">
-          <template slot-scope="scope">
-            <el-button type="text" @click="viewOrder(scope.row)">查看</el-button>
-          </template>
-        </el-table-column>
+        <el-table-column label="操作" width="140" align="center">
+  <template slot-scope="scope">
+    <div style="display: flex; gap: 8px;">
+      <el-button type="info" size="small" @click="viewOrder(scope.row)">查看</el-button>
+      <el-button type="success" size="small" @click="updateStatus(scope.row)">完成</el-button>
+    </div>
+  </template>
+</el-table-column>
+
       </el-table>
   
       <!-- 分页 -->
@@ -114,13 +117,29 @@
     },
       // 查询订单
       searchOrders() {
-        // 模拟请求，实际需调用后端接口
-        this.orders = [
-          { orderNumber: '1000001', orderTime: '2023-10-23 12:00', totalAmount: '¥450.00', tableNumber: '001', status: 'paid' },
-          // 其他订单数据
-        ];
-        this.totalOrders = this.orders.length;
-      },
+        axios.post("http://localhost:80/orders/selectByConditions",this.filterForm,
+        {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+      .then((res) => {
+        if (res.data.code === "200") {
+          this.orders=res.data.data;
+          this.$message({
+            message: '成功',
+            type: 'success'
+          });
+        
+        } else {
+          this.$message({
+            message: '失败',
+            type: 'error'
+          });
+        }
+      });
+      // 查询逻辑
+    },
       // 导出订单
       exportOrders() {
         console.log('导出订单');
@@ -130,6 +149,25 @@
       viewOrder(order) {
         console.log('查看订单详情', order);
         // 实际的查看逻辑
+      },
+      updateStatus(row){
+        console.log('Order ID:', row.orderId);
+        axios.put(`http://localhost:80/orders/updateStatus?id=${row.orderId}`)
+        .then((res) => {
+        if (res.data.code === "200") {
+          this.selectAllOrder();
+          this.$message({
+            message: '成功',
+            type: 'success'
+          });
+        
+        } else {
+          this.$message({
+            message: '失败',
+            type: 'error'
+          });
+        }
+      });
       },
       // 分页切换
       handlePageChange(page) {

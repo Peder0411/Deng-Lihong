@@ -25,7 +25,6 @@ const routes = [
     path: '/main',
     name: 'main',
     component: MainContent,
-    // 添加 meta 信息，表示需要登录
     meta: { requiresAuth: true }
   },
   {
@@ -49,19 +48,19 @@ const routes = [
   {
     path: '/AddDish',
     name: 'AddDish',
-    component:AddDish ,
+    component: AddDish,
     meta: { requiresAuth: true }
   },
   {
     path: '/IOrderManagement',
     name: 'IOrderManagement',
-    component:IOrderManagement ,
+    component: IOrderManagement,
     meta: { requiresAuth: true }
   },
   {
     path: '/AddUser',
     name: 'AddUser',
-    component:AddUser ,
+    component: AddUser,
     meta: { requiresAuth: true }
   }
 ];
@@ -72,12 +71,33 @@ const router = new VueRouter({
 });
 
 // 路由守卫，检查是否已登录
+function checkTokenValidity() {
+  const token = localStorage.getItem('token');
+  const tokenExpireTime = localStorage.getItem('tokenExpireTime');
+  const currentTime = new Date().getTime();
+  
+  if (token && tokenExpireTime) {
+    if (currentTime < tokenExpireTime) {
+      return true; // token 有效
+    } else {
+      localStorage.removeItem('token');
+      localStorage.removeItem('tokenExpireTime');
+      return false; // token 过期
+    }
+  }
+  return false; // 无 token
+}
+
+// 路由守卫，检查是否已登录
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = !!localStorage.getItem('token'); // 假设用 token 判断登录状态
-  if (to.path !== '/loginPage' && !isLoggedIn) {
-    next('/loginPage'); // 未登录时跳转到登录页
+  const isLoggedIn = checkTokenValidity();
+
+  if (to.path === '/loginPage' && isLoggedIn) {
+    next('/main'); // 已登录，重定向到主页面
+  } else if (to.matched.some(record => record.meta.requiresAuth) && !isLoggedIn) {
+    next('/loginPage'); // 未登录，跳转到登录页
   } else {
-    next(); // 已登录或者在访问登录页时放行
+    next(); // 放行
   }
 });
 

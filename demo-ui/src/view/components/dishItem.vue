@@ -53,13 +53,15 @@
         </el-table-column>
 
         <!-- 操作列 -->
-        <el-table-column label="操作" width="120">
-          <template v-slot="scope">
-            <el-button type="text" @click="view(scope.row)">查看</el-button>
-            <el-button type="text" @click="edit(scope.row)">编辑</el-button>
-            <el-button type="text" @click="deleteDish(scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
+        <el-table-column label="操作" width="200" align="center">
+  <template slot-scope="scope">
+    <div style="display: flex; gap: 4px;">
+      <el-button type="success" size="mini" @click="handleView(scope.row)">查看</el-button>
+      <el-button type="warning" size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+      <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
+    </div>
+  </template>
+</el-table-column>
       </el-table>
 
       <!-- 分页 -->

@@ -22,6 +22,5 @@ public interface OrdersMapper extends BaseMapper<Orders> {
     List<OrderTableInfoDTO> selectAll(@Param("offset") int offset, @Param("limit") int limit);
 
     //条件查询
-
     List <OrderTableInfoDTO> selectByConditios(@Param("orderTableInfoDTO") OrderTableInfoDTO orderTableInfoDTO);
 }

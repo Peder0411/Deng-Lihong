@@ -87,7 +87,12 @@
     axios.post("http://localhost:80/user/login", loginData)
       .then(response => {
         if (response.data.code === "200") {
-          localStorage.setItem('token', response.data.token); 
+          const token = response.data.token;
+          const expireTime = new Date().getTime() + 3600 * 1000; // 设置token有效期为1小时
+          
+          // 存储token和过期时间
+          localStorage.setItem('token', token);
+          localStorage.setItem('tokenExpireTime', expireTime);
           this.$router.push('/main');
         } else {
           this.$message.error(response.data.msg || '登录失败');

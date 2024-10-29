@@ -49,7 +49,6 @@
         WHERE
             o.status = #{orderTableInfoDTO.status}
           AND o.order_time = #{orderTableInfoDTO.orderTime}
-          AND o.completion_time = #{orderTableInfoDTO.completionTime}
           AND t.table_number = #{orderTableInfoDTO.tableNumber};
 
     </select>
