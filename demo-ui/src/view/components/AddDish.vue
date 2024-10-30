@@ -22,7 +22,7 @@
           <img width="100%" :src="dialogImageUrl" alt="">
         </el-dialog>
       </el-form-item>
-      <el-form-item label="类型" prop="kind">
+      <el-form-item label="描述" prop="kind">
         <el-input v-model="form.kind" placeholder="请输入菜品类型"></el-input>
       </el-form-item>
 

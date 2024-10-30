@@ -4,6 +4,7 @@ package com.practice.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yulichang.toolkit.support.IdeaProxyLambdaMeta;
 import com.practice.common.result.ResultUtils;
@@ -33,6 +34,12 @@ public class DishController {
     @Autowired
     private IDishService iDishService;
 
+
+    @GetMapping("/getAllDish")
+    public Object getAllDish(){
+        List<Dish> list=iDishService.list();
+        return ResultUtils.returnDataSuccess(list);
+    }
 
     //查询菜单
     @GetMapping("/getAll")

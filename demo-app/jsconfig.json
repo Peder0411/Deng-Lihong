@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es2015",  // 可改为 "commonjs" 或 "esnext" 根据需求调整
+    "baseUrl": "./",
+    "moduleResolution": "node",
+    "paths": {
+      "@/*": [
+        "src/"
+      ]
+    },
+    "lib": [
+      "es2015",
+      "dom"
+    ]
+  }
+}

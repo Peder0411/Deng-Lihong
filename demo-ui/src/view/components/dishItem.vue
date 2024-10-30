@@ -23,19 +23,19 @@
       </el-row>
 
       <!-- 表格 -->
-      <el-table :data="dishes" stripe style="width: 100%; margin-top: 20px;">
-        <el-table-column prop="id" label="编号" width="100"></el-table-column>
+      <el-table :data="dishes" stripe style=" margin-top: 20px;">
+        <el-table-column prop="id" label="编号" width="70"></el-table-column>
         <el-table-column label="菜品图片" width="120">
           <template v-slot="scope">
             <img :src="scope.row.image" alt="" class="dish-image" />
           </template>
         </el-table-column>
-        <el-table-column prop="kind" label="种类"></el-table-column>
+        <el-table-column prop="kind" label="描述" width="150"></el-table-column>
         <el-table-column prop="dishName" label="菜品名称"></el-table-column>
         <el-table-column prop="price" label="价格"></el-table-column>
         <el-table-column prop="originalPrice" label="原价"></el-table-column>
         <el-table-column prop="discount" label="折扣" width="80"></el-table-column>
-        <el-table-column prop="soldPerMonth" label="月销售" width="100"></el-table-column>
+        <el-table-column prop="soldPerMonth" label="月销售" width="80"></el-table-column>
         
         <!-- 上下架列 -->
         <el-table-column label="上下架" width="100">
@@ -53,7 +53,7 @@
         </el-table-column>
 
         <!-- 操作列 -->
-        <el-table-column label="操作" width="200" align="center">
+        <el-table-column label="操作" width="210" align="center">
   <template slot-scope="scope">
     <div style="display: flex; gap: 4px;">
       <el-button type="success" size="mini" @click="handleView(scope.row)">查看</el-button>
