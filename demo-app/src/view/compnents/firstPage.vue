@@ -8,7 +8,6 @@
         <p>188 8888 8888</p>
         <el-button size="mini" type="success">营业中</el-button>
       </div>
-
     </div>
 
     <!-- 快捷功能按钮 -->
@@ -24,7 +23,7 @@
           <el-button class="quick-button" type="success">排队取号</el-button>
         </el-col>
         <el-col :span="12">
-          <el-button class="quick-button" type="warning">餐桌预约</el-button>
+          <el-button class="quick-button" type="warning" @click="goToTableReservation ">餐桌预约</el-button>
         </el-col>
       </el-row>
     </div>
@@ -60,6 +59,16 @@ export default {
    * 
    */
    methods: {
+    goToTableReservation() {
+  console.log('当前路径:', this.$route.path); // 添加日志输出
+  if (this.$route.path !== '/TableReservation') {
+    this.$router.push({ path: '/TableReservation' });
+    console.log('导航到 TableReservation'); // 确认是否执行
+  } else {
+    console.log('已经在 TableReservation 页面'); // 确认当前路径
+  }
+},
+
     gitAllDish() {
     axios.get("http://localhost:80/dish/getAllDish")
       .then((res) => {
@@ -125,29 +134,8 @@ export default {
   border-bottom: 1px solid #e0e0e0;
 }
 
-.shop-info {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  background-color: #fff;
-  margin-top: 8px;
-}
 
-.shop-logo {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  margin-right: 16px;
-}
 
-.shop-details h3 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.shop-more {
-  margin-left: auto;
-}
 
 .quick-actions {
   border-radius: 10px;

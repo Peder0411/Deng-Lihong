@@ -31,5 +31,5 @@ public class TableInfo implements Serializable {
     private String tableImage;
     private String tableAddress;
     private String tableType;
-    private String status;
+    private Integer status;
 }
