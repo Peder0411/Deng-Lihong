@@ -23,4 +23,7 @@ public interface OrdersMapper extends BaseMapper<Orders> {
 
     //条件查询
     List <OrderTableInfoDTO> selectByConditios(@Param("orderTableInfoDTO") OrderTableInfoDTO orderTableInfoDTO);
+
+
+    public boolean insertConditions(@Param("tableId") Integer tableId, @Param("peopleCount") int peopleCount);
 }

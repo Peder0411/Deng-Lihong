@@ -20,4 +20,7 @@ public interface IOrdersService extends IService<Orders> {
     int countOrders();
 
     List <OrderTableInfoDTO> selectByConditions(OrderTableInfoDTO orderTableInfoDTO);
+
+
+    public boolean insertConditions(Integer tableId, int peopleCount);
 }

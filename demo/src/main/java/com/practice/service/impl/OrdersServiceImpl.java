@@ -41,4 +41,9 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     public List<OrderTableInfoDTO> selectByConditions(OrderTableInfoDTO orderTableInfoDTO) {
         return ordersMapper.selectByConditios(orderTableInfoDTO);
     }
+
+    @Override
+    public boolean insertConditions(Integer tableId, int peopleCount) {
+       return ordersMapper.insertConditions(tableId,peopleCount);
+    }
 }

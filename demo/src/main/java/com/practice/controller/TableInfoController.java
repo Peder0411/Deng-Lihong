@@ -35,30 +35,31 @@ public class TableInfoController {
     private ICartService iCartService;
     @Autowired
     private IOrdersService iOrdersService;
+
     //管理端
     @GetMapping("/selectTable")
-    public Object selectTable(@RequestParam Integer page,@RequestParam Integer limit){
+    public Object selectTable(@RequestParam Integer page, @RequestParam Integer limit) {
 
-        IPage p = new Page(page,limit);
+        IPage p = new Page(page, limit);
 
-        IPage res =iTableService.page(p);
+        IPage res = iTableService.page(p);
 
         List list = res.getRecords();
 
         int total = (int) res.getTotal();
 
-        return ResultUtils.returnSuccessLayui(list ,total);
+        return ResultUtils.returnSuccessLayui(list, total);
     }
 
     //客户端
     @GetMapping("/getAllTable")
-    public Object getAllTable(){
-        List<TableInfo> list =iTableService.list();
+    public Object getAllTable() {
+        List<TableInfo> list = iTableService.list();
         return ResultUtils.returnDataSuccess(list);
     }
 
-    @PostMapping("/insertId")
-    public  Object insertId(@RequestParam int id){
+    @GetMapping("/insertId")
+    public Object insertId(@RequestParam int id,@RequestParam int peopleCount) {
         TableInfo tableInfo = iTableService.getById(id);
         // 如果订单不存在，返回错误信息
         if (tableInfo == null) {
@@ -67,20 +68,10 @@ public class TableInfoController {
         // 更新订单状态
         tableInfo.setStatus(1);
         boolean flag = iTableService.updateById(tableInfo);
-        if (!flag) {
-            return "Failed to update table status";
-        }
-        Cart cart = new Cart();
-        cart.setTableId(id);
+        Orders orders=new Orders();
+        orders.setTableId(tableInfo.getId());
+        boolean insertFlag = iOrdersService.insertConditions(tableInfo.getId(), peopleCount);
 
-        Orders orders = new Orders();
-        orders.setTableId(id);
-        boolean cartFlag = iCartService.save(cart);
-        boolean orderDetailFlag = iOrdersService.save(orders);
-        if (cartFlag && orderDetailFlag){
-            return ResultUtils.returnSuccess();
-        }
-        return false;
+        return ResultUtils.returnDataSuccess(flag && insertFlag);
     }
-
 }
