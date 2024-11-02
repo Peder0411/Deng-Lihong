@@ -22,7 +22,7 @@
               </el-tag>
             </div>
             <h3>{{ table.tableNumber }}号桌</h3>
-            <p class="table-capacity">{{ table.tableType }}桌</p>
+            <p class="table-capacity">{{ table.tableType }}人桌</p>
           </div>
           <!-- 新增人数输入框 -->
           <div v-if="selectedTable === table.tableNumber" class="table-guest-input">
@@ -53,7 +53,8 @@ export default {
     return {
       guestCount: null,
       tables: [],
-      selectedTable: null // 存储单个选中桌位的编号
+      selectedTable: null,
+      selectedTableType: null  // 存储单个选中桌位的编号
     };
   },
   computed: {
@@ -94,21 +95,32 @@ export default {
       if (table.status === 0) {
         this.selectedTable = this.selectedTable === table.tableNumber ? null : table.tableNumber;
         this.selectedTableId = this.selectedTable !== null ? table.id : null;
+        this.selectedTableType = this.selectedTable !== null ? table.tableType : null;
         if (this.selectedTable !== null) {
       console.log(`选中桌子的 ID: ${table.id}`);
+      localStorage.setItem('selectedTableId', this.selectedTableId);
     }
       }
     },
-    submitSelection() {
-      if (!this.guestCount) {
-        this.$message.error("请选择人数");
-        return;
+    submitSelection( ) {
+      console.log(`当前桌位的最大容量: ${this.selectedTableType}`);
+      console.log(`当前输入的客人数: ${this.guestCount}`);
+        if (this.guestCount > this.selectedTableType) {
+        this.$message.error(`输入人数不能超过桌位最大容量：${this.selectedTableType}，请重新输入`);
+        this.guestCount = null; // 清空输入人数
+        return; 
       }
-      axios.get(`http://localhost:80/tableInfo/insertId?id=${this.selectedTableId}`)
+      if (Number(this.guestCount) < Number(this.selectedTableType) - 2) {
+        this.$message.error(`输入人数不能少于：${this.selectedTableType - 2} 人，请重新输入`);
+        this.guestCount = null; // 清空输入人数
+        return;
+    }
+      axios.get(`http://localhost:80/tableInfo/insertId?id=${this.selectedTableId}&peopleCount=${this.guestCount}`)
     .then((res) => {
       if (res.data.code === "200") {
         this.$message.success(`提交成功：桌位号 ${this.selectedTableId}`);
-        this.getAllTables(); // 提交成功后刷新桌位状态
+        this.getAllTables();
+        this.$router.push({ path: '/order' }); // 提交成功后刷新桌位状态
       } else {
         this.$message.error("提交失败");
       }

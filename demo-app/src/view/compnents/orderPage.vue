@@ -51,17 +51,16 @@
             <p :class="{'status-on': item.status === '在售', 'status-off': item.status === '停售'}">{{ item.status }}</p>
           </div>
           <!-- 添加“+”号按钮 -->
-          <el-button type="success" icon="el-icon-plus" size="mini"></el-button>
+          <el-button type="success" icon="el-icon-plus" size="mini" @click="addToCart(item)"></el-button>
         </div>
       </el-main>
     </el-container>
 
     <!-- 底部操作栏 -->
     <el-footer class="footer">
-  <div class="total-price">
-    <span>总价: ￥{{ totalPrice }}</span>
-  </div>
-  <el-button type="primary" class="checkout-btn" :disabled="cart.length === 0">去下单</el-button>
+    <span class="original-price">原价：￥{{ originalPrice }}</span>
+    <span class="discounted-price">到手约：￥{{ totalPrice }}</span>
+  <el-button type="primary" class="checkout-btn" :disabled="cart.length === 0" @click="goToCheckOrder">去下单</el-button>
 </el-footer>
   </div>
 </template>
@@ -74,11 +73,15 @@ export default {
       searchQuery: '',
       menuItems: [],
       cart: [],
+      selectedTableId: null,
     };
   },
   computed: {
-  totalPrice() {
-    return this.menuItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+    totalPrice() {
+      return this.cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+    },
+    originalPrice() {
+    return this.cart.reduce((total, item) => total + item.originalPrice * item.quantity, 0).toFixed(2);
   }
 },
   methods: {
@@ -112,19 +115,91 @@ export default {
           });
         });
     },
+    goToCheckOrder() {
+  // 遍历购物车中的每个商品
+  const orderDetail = this.cart.map(cartItem => ({
+    tableId: this.selectedTableId,
+    dishId: cartItem.id,
+    quantity: cartItem.quantity,
+    dishName: cartItem.dishName,
+    dishPrice: cartItem.price,
+    dishImage: cartItem.image
+  }));
+
+  axios.post("http://localhost:80/order-detail/saveOrderInfo", orderDetail)
+    .then(res => {
+      if (res.data.code === "200") {
+        this.$message({
+          message: '订单已成功提交',
+          type: 'success'
+        });
+      } else {
+        this.$message({
+          message: '提交失败',
+          type: 'error'
+        });
+      }
+    })
+    .catch(error => {
+      this.$message({
+        message: `请求失败: ${error.message}`,
+        type: 'error'
+      });
+    });
+},
     addToCart(item) {
-      const menuId = item.id;
-      console.log("Selected menu ID:", menuId);
-      this.cart.push(item);
+      const cartItem = this.cart.find(cartItem => cartItem.id === item.id);
+      if (cartItem) {
+        cartItem.quantity += 1; // 如果商品已在购物车中，增加数量
+      } else {
+        this.cart.push({ ...item, quantity: 1 }); // 添加商品并设置数量为1
+      }
+      const cartData={
+      tableId: this.selectedTableId,
+      dishId: item.id,
+      quantity: cartItem ? cartItem.quantity : 1, // 如果是新商品，数量为1
+  };
+      axios.post("http://localhost:80/cart/InsertCart",cartData)
+      console.log(cartData)
+      .then((res)=>{
+        if (res.data.code === "200") {
+          this.$message({
+            message: '成功',
+            type: 'success'
+          });
+        }else{
+          this.$message({
+            message: '失败',
+            type: 'error'
+          });
+        }
+      })
     },
   },
   mounted() {
     this.gitAllDish();
+    const selectedTableId = localStorage.getItem('selectedTableId');
+  if (selectedTableId) {
+    this.selectedTableId = selectedTableId; // 赋值
+    console.log(`从 localStorage 中获取的选中桌子 ID: ${selectedTableId}`);
+  }
   },
 };
 </script>
 
 <style scoped>
+.original-price {
+  text-decoration: line-through;
+  color: #888;
+  margin-right: 8px;
+}
+
+.discounted-price {
+  color: #f00;
+  font-weight: bold;
+  font-size: 12px
+}
+
 .shop-info {
   display: flex;
   align-items: center;

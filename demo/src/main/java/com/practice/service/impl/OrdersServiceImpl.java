@@ -46,4 +46,11 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     public boolean insertConditions(Integer tableId, int peopleCount) {
        return ordersMapper.insertConditions(tableId,peopleCount);
     }
+
+    @Override
+    public Integer selectByTableId(int tableId) {
+        return ordersMapper.selectByTableId(tableId);
+    }
+
+
 }

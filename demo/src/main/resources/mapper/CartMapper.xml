@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lrr.mapper.CartMapper">
+<mapper namespace="com.practice.mapper.CartMapper">
 
+    <insert id="saveCart">
+        INSERT INTO cart (table_id, dish_id,quantity)
+        VALUES (#{tableId}, #{dishId},#{quantity})
+    </insert>
+    <update id="updateDishId">
+        update cart set quantity =#{quantity} where dish_id=#{dishId}
+    </update>
+    <select id="SelectByDishId" resultType="java.lang.Boolean">
+        SELECT COUNT(*) > 0 FROM cart WHERE dish_id = #{dishId}
+    </select>
 </mapper>

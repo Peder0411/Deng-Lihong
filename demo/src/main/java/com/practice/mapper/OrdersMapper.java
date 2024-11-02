@@ -26,4 +26,6 @@ public interface OrdersMapper extends BaseMapper<Orders> {
 
 
     public boolean insertConditions(@Param("tableId") Integer tableId, @Param("peopleCount") int peopleCount);
+
+    Integer selectByTableId (@Param("tableId") int tableId);
 }
