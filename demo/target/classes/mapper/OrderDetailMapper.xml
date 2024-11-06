@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.practice.mapper.OrderDetailMapper">
+    <update id="updateDishId">
+        update order_detail set quantity =#{quantity} where dish_id=#{dishId}
+    </update>
 
+
+    <select id="getOrderDetailsWithDishInfo" resultType="com.practice.entity.OrderDetail">
+        SELECT
+            od.`dish_id`,
+            od.`order_id`,
+            od.`dish_name`,
+            od.`dish_price`,
+            od.`quantity`,
+            d.`image` AS dish_image,
+            d.`kind` AS dish_kind,
+            d.`original_price` AS dish_original_price  -- 查询原价
+        FROM
+            `order_detail` od
+                LEFT JOIN
+            `dish` d ON od.`dish_id` = d.`id`;
+
+    </select>
+    <select id="selectByDishId" resultType="com.practice.entity.OrderDetail">
+        select * from order_detail where dish_id = #{dishId}
+    </select>
+    <select id="getAllByOrder" resultType="com.practice.entity.OrderDetail">
+        SELECT
+            o.status,
+            d.dish_image AS dishImage,
+            d.order_id AS orderId,
+            d.quantity,
+            o.total_amount AS totalAmount,
+            o.order_time AS orderTime
+        FROM
+            orders o
+                LEFT JOIN
+            order_detail d ON o.id = d.order_id
+        WHERE
+            o.table_id = #{tableId};
+    </select>
+    <select id="getByOrderId" resultType="com.practice.entity.OrderDetail">
+        select * from order_detail where order_id =#{tableId}
+    </select>
 </mapper>

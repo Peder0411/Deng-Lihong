@@ -1,8 +1,11 @@
 package com.practice.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -34,5 +37,15 @@ public class Cart implements Serializable {
 
     private Integer quantity;
 
+    @TableField(exist = false)
+    private String dishName;
+    @TableField(exist = false)
+    private String image;
+    @TableField(exist = false)
+    private BigDecimal price;
+    @TableField(exist = false)
+    private String kind;
+    @TableField(exist = false)
+    private BigDecimal originalPrice;
 
 }

@@ -55,25 +55,67 @@
         </div>
       </el-main>
     </el-container>
-
     <!-- 底部操作栏 -->
     <el-footer class="footer">
     <span class="original-price">原价：￥{{ originalPrice }}</span>
     <span class="discounted-price">到手约：￥{{ totalPrice }}</span>
-  <el-button type="primary" class="checkout-btn" :disabled="cart.length === 0" @click="goToCheckOrder">去下单</el-button>
+    <el-button type="primary" class="checkout-btn" :disabled="cart.length === 0" @click=" isDialogVisible = true;">去下单</el-button>
 </el-footer>
+  <!-- 弹窗 -->
+  <el-dialog  :visible.sync="isDialogVisible" width="25%" :modal-append-to-body="false">
+
+    <div class="date-time">{{ currentDateTime }}</div>
+      <!-- 商品列表 -->
+      <div v-for="(item, index) in cart" :key="index" class="cart-item">
+        <img :src="item.image" class="item-image" alt="商品图片" />
+        <div class="item-info">
+          <p>{{ item.dishName }}</p>
+          <p>{{ item.kind }}</p>
+          <p class="price">¥{{ item.price }}</p>
+          <p class="original-price">¥{{ item.originalPrice }}</p>
+        </div>
+        <div class="item-quantity">
+  <el-button size="mini" @click="decreaseQuantity(item)">
+    <i class="el-icon-minus"></i>
+  </el-button>
+  <span>{{ item.quantity }}</span>
+  <el-button size="mini" @click="increaseQuantity(item)">
+    <i class="el-icon-plus"></i> 
+  </el-button>
+</div>
+      </div>
+      <div class="input-area">
+    <el-input
+      v-model="inputValue"
+      placeholder="备注"
+      clearable
+      @keyup.enter="handleEnter"
+    ></el-input>
+  </div>
+      <div class="checkout">
+        <span class="discounted-price">到手约：￥{{ totalPrice }}</span>
+        <span class="original-price">￥{{ originalPrice }}</span>
+        <el-button type="primary" @click="confirmOrder">去结算</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+
+
 export default {
   data() {
     return {
+      inputValue: '' ,
+      currentDateTime: '',
       searchQuery: '',
       menuItems: [],
       cart: [],
       selectedTableId: null,
+      isDialogVisible: false,
+      guestCount: null,
     };
   },
   computed: {
@@ -85,6 +127,114 @@ export default {
   }
 },
   methods: {
+    handleEnter() {
+      // 处理输入框中的回车事件
+      console.log(this.inputValue); // 在控制台输出输入的值
+      this.inputValue = ''; // 清空输入框
+    },
+    updateDateTime() {
+      const now = new Date();
+      this.currentDateTime = this.formatDate(now); // 格式化日期和时间
+    },
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从 0 开始
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`; // 格式化输出
+    },
+    decreaseQuantity(item){
+      if (item.quantity > 1) {
+        item.quantity -= 1;
+      } else {
+        // 如果数量为 0，则从购物车中移除商品
+        this.cart = this.cart.filter(cartItem => cartItem.id !== item.id);
+      }
+      axios.delete(`http://localhost:80/cart/delete?dishId=${item.dishId}`)
+  .then((res)=>{
+        if (res.data.code === "200") {
+          this.getAllOrderDetail();
+          this.$message({
+            message: '成功',
+            type: 'success'
+          });
+        }else{
+          this.$message({
+            message: '失败',
+            type: 'error'
+          });
+        }
+      })
+    },
+    increaseQuantity(item) {
+  axios.get(`http://localhost:80/cart/save?dishId=${item.dishId}`)
+    .then((res) => {
+      if (res.data.code === "200") {
+        item.quantity += 1;
+        this.getAllOrderDetail();
+        this.$message({
+          message: '成功',
+          type: 'success'
+        });
+      } else {
+        this.$message({
+          message: '失败',
+          type: 'error'
+        });
+      }
+  
+    });
+},
+    getAllOrderDetail(){
+      axios.get("http://localhost:80/cart/selectAll")
+      .then((res)=>{
+        if(res.data.code === "200"){
+          this.cart = res.data.data.map(item => ({
+  ...item,
+  dishPrice: parseFloat(item.dishPrice), // 转换为数字
+  dishOriginalPrice: parseFloat(item.dishOriginalPrice) // 转换为数字
+}));
+          this.$message({
+            message: '成功',
+            type: 'success'
+          });
+        }else{
+          this.$message({
+              message: '失败',
+              type: 'error'
+            });
+        }
+      })
+    },
+    confirmOrder() {
+      this.isDialogVisible = false; 
+      const confirData = {
+        tableId: this.selectedTableId,
+        peopleCount: this.guestCount,
+        totalAmount: this.totalPrice,
+        status: 0,
+        orderTime: this.currentDateTime,
+        notes:this. inputValue
+      }
+      axios.post("http://localhost:80/orders/saveAll",confirData)
+      .then((res)=>{
+        if (res.data.code === "200") {
+          this.$router.push({ path: '/' });
+          this.$message({
+            message: '成功',
+            type: 'success'
+          }); 
+        }else{
+          this.$message({
+            message: '失败',
+            type: 'error'
+          });
+        }
+      })
+    
+    },
     gitAllDish() {
       axios.get("http://localhost:80/dish/getAllDish")
         .then((res) => {
@@ -115,58 +265,27 @@ export default {
           });
         });
     },
-    goToCheckOrder() {
-  // 遍历购物车中的每个商品
-  const orderDetail = this.cart.map(cartItem => ({
-    tableId: this.selectedTableId,
-    dishId: cartItem.id,
-    quantity: cartItem.quantity,
-    dishName: cartItem.dishName,
-    dishPrice: cartItem.price,
-    dishImage: cartItem.image
-  }));
-
-  axios.post("http://localhost:80/order-detail/saveOrderInfo", orderDetail)
-    .then(res => {
-      if (res.data.code === "200") {
-        this.$message({
-          message: '订单已成功提交',
-          type: 'success'
-        });
-      } else {
-        this.$message({
-          message: '提交失败',
-          type: 'error'
-        });
-      }
-    })
-    .catch(error => {
-      this.$message({
-        message: `请求失败: ${error.message}`,
-        type: 'error'
-      });
-    });
-},
-    addToCart(item) {
-      const cartItem = this.cart.find(cartItem => cartItem.id === item.id);
-      if (cartItem) {
-        cartItem.quantity += 1; // 如果商品已在购物车中，增加数量
-      } else {
-        this.cart.push({ ...item, quantity: 1 }); // 添加商品并设置数量为1
-      }
-      const cartData={
-      tableId: this.selectedTableId,
-      dishId: item.id,
-      quantity: cartItem ? cartItem.quantity : 1, // 如果是新商品，数量为1
-  };
-      axios.post("http://localhost:80/cart/InsertCart",cartData)
-      console.log(cartData)
-      .then((res)=>{
+addToCart(item) {
+  const cartItem = this.cart.find(cartItem => cartItem.id === item.id);
+  // 判断商品是否已存在购物车中，如果存在则数量增加
+  if (cartItem) {
+    cartItem.quantity += 1;
+  } else {
+    this.cart.push({ ...item, quantity: 1 });
+  }
+  const insertData ={
+   tableId: this.selectedTableId,
+   dishId: item.id,
+   quantity: cartItem ? cartItem.quantity : 1 
+  }
+  axios.post("http://localhost:80/cart/InsertCart",insertData)
+  .then((res)=>{
         if (res.data.code === "200") {
           this.$message({
             message: '成功',
             type: 'success'
-          });
+          }); 
+          this.getAllOrderDetail();
         }else{
           this.$message({
             message: '失败',
@@ -174,20 +293,94 @@ export default {
           });
         }
       })
-    },
+    }
   },
+
   mounted() {
+    setInterval(this.updateDateTime, 1000);
     this.gitAllDish();
     const selectedTableId = localStorage.getItem('selectedTableId');
   if (selectedTableId) {
     this.selectedTableId = selectedTableId; // 赋值
-    console.log(`从 localStorage 中获取的选中桌子 ID: ${selectedTableId}`);
+  }
+  const guestCount = localStorage.getItem('guestCount');
+  if (guestCount) {
+    this.guestCount = guestCount; // 赋值
   }
   },
 };
 </script>
 
 <style scoped>
+.date-time {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.cart-item {
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+  justify-content: space-between; /* 均匀分布内容 */
+}
+
+.item-info {
+  flex-grow: 1; /* 允许内容区域占用剩余空间 */
+  padding: 0 10px; /* 添加适当的内边距 */
+}
+
+.item-quantity {
+  display: flex;
+  align-items: center; /* 确保加减按钮与数量垂直居中对齐 */
+}
+
+.item-quantity el-button {
+  margin: 0 5px; /* 调整按钮之间的间距 */
+}
+
+.price, .original-price {
+  line-height: 1.5; /* 确保价格文本的行高一致 */
+}
+
+
+.fixed-size-dialog {
+  max-width: 375px;
+  width: 90%; /* 自动适应屏幕宽度 */
+}
+
+.cart-summary {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.item-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+
+.price {
+  color: #f56c6c;
+}
+.checkout {
+  padding: 10px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  /* 更小屏幕的适配 */
+  .cart-summary, .cart-item p, .price, .item-quantity {
+    font-size: 12px;
+  }
+
+  .item-image {
+    width: 40px;
+    height: 40px;
+  }
+}
+
 .original-price {
   text-decoration: line-through;
   color: #888;
@@ -324,4 +517,5 @@ export default {
 .checkout-btn {
   width: 90%;
 }
+
 </style>

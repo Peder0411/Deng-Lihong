@@ -4,7 +4,10 @@ import com.practice.entity.OrderDetail;
 import com.practice.mapper.OrderDetailMapper;
 import com.practice.service.IOrderDetailService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +20,33 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, OrderDetail> implements IOrderDetailService {
 
+
+    @Autowired
+    private  OrderDetailMapper orderDetailMapper;
+
+
+    @Override
+    public List<OrderDetail> selectByDishId(int dishId) {
+        return orderDetailMapper.selectByDishId(dishId);
+    }
+
+    @Override
+    public boolean updateDishId(int dishId,int quantity) {
+        return orderDetailMapper.updateDishId(dishId,quantity);
+    }
+
+    @Override
+    public List<OrderDetail> getOrderDetailsWithDishInfo() {
+        return orderDetailMapper.getOrderDetailsWithDishInfo();
+    }
+
+    @Override
+    public List<OrderDetail> getAllByOrder(int tableId) {
+        return orderDetailMapper.getAllByOrder(tableId);
+    }
+
+    @Override
+    public List<OrderDetail> getByOrderId(int tableId) {
+        return orderDetailMapper.getByOrderId(tableId);
+    }
 }

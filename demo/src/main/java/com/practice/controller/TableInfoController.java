@@ -51,6 +51,16 @@ public class TableInfoController {
         return ResultUtils.returnSuccessLayui(list, total);
     }
 
+    @PostMapping("save")
+    public Object save(@RequestBody TableInfo tableInfo){
+        boolean flag = iTableService.save(tableInfo);
+        return ResultUtils.returnDataSuccess(flag );
+    }
+    @DeleteMapping("delete")
+    public Object delete(@RequestParam int id){
+        boolean flag =iTableService.removeById(id);
+        return  ResultUtils.returnDataSuccess(flag);
+    }
     //客户端
     @GetMapping("/getAllTable")
     public Object getAllTable() {
@@ -58,20 +68,28 @@ public class TableInfoController {
         return ResultUtils.returnDataSuccess(list);
     }
 
-    @GetMapping("/insertId")
-    public Object insertId(@RequestParam int id,@RequestParam int peopleCount) {
-        TableInfo tableInfo = iTableService.getById(id);
-        // 如果订单不存在，返回错误信息
-        if (tableInfo == null) {
-            return false;
-        }
-        // 更新订单状态
-        tableInfo.setStatus(1);
-        boolean flag = iTableService.updateById(tableInfo);
-        Orders orders=new Orders();
-        orders.setTableId(tableInfo.getId());
-        boolean insertFlag = iOrdersService.insertConditions(tableInfo.getId(), peopleCount);
+//    @GetMapping("/insertId")
+//    public Object insertId(@RequestParam int id,@RequestParam int peopleCount) {
+//        TableInfo tableInfo = iTableService.getById(id);
+//        // 如果订单不存在，返回错误信息
+//        if (tableInfo == null) {
+//            return false;
+//        }
+//        // 更新订单状态
+//        tableInfo.setStatus(1);
+//        boolean flag = iTableService.updateById(tableInfo);
+//        Orders orders=new Orders();
+//        orders.setTableId(tableInfo.getId());
+//        boolean insertFlag = iOrdersService.insertConditions(tableInfo.getId(), peopleCount);
+//
+//        return ResultUtils.returnDataSuccess(flag && insertFlag);
+//    }
 
-        return ResultUtils.returnDataSuccess(flag && insertFlag);
+    @PostMapping("/selectAllByConditions")
+    public Object selectAllByConditions(@RequestBody TableInfo tableInfo){
+       List <TableInfo> list = iTableService.selectAllByConditions(tableInfo);
+        return ResultUtils.returnDataSuccess(list);
     }
+
+
 }

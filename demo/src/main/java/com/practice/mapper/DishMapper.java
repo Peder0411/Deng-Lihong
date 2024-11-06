@@ -3,6 +3,8 @@ package com.practice.mapper;
 import com.practice.entity.Dish;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface DishMapper extends BaseMapper<Dish> {
 
+    List <Dish> selectByStatus();
 }

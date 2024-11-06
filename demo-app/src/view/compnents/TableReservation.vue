@@ -103,6 +103,7 @@ export default {
       }
     },
     submitSelection( ) {
+       this.$router.push({ path: '/order' });
       console.log(`当前桌位的最大容量: ${this.selectedTableType}`);
       console.log(`当前输入的客人数: ${this.guestCount}`);
         if (this.guestCount > this.selectedTableType) {
@@ -114,21 +115,9 @@ export default {
         this.$message.error(`输入人数不能少于：${this.selectedTableType - 2} 人，请重新输入`);
         this.guestCount = null; // 清空输入人数
         return;
-    }
-      axios.get(`http://localhost:80/tableInfo/insertId?id=${this.selectedTableId}&peopleCount=${this.guestCount}`)
-    .then((res) => {
-      if (res.data.code === "200") {
-        this.$message.success(`提交成功：桌位号 ${this.selectedTableId}`);
-        this.getAllTables();
-        this.$router.push({ path: '/order' }); // 提交成功后刷新桌位状态
-      } else {
-        this.$message.error("提交失败");
       }
-    })
-    .catch((error) => {
-      this.$message.error(`提交失败: ${error.message}`);
-    });
-}
+      localStorage.setItem('guestCount', this.guestCount);
+    }
   },
   mounted() {
     this.getAllTables();

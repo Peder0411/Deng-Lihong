@@ -2,6 +2,9 @@ package com.practice.service;
 
 import com.practice.entity.Cart;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -18,4 +21,10 @@ public interface ICartService extends IService<Cart> {
     boolean SelectByDishId(int dishId);
 
     boolean updateDishId(int dishId, int quantity);
+
+    List<Cart> selectAll();
+
+    List<Cart> selectQuantity( int dishId);
+    boolean deleteByDishId(int dishId);
+    List <Cart> selectAllByTableId(@Param("tableId") int tableId);
 }

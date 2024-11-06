@@ -1,12 +1,13 @@
 <template>
   <el-form :model="user" :rules="rules" ref="userForm" label-width="120px" class="user-form">
+  
+    <el-form-item label="姓名" prop="name">
+      <el-input v-model="user.name" placeholder="请输入姓名"></el-input>
+    </el-form-item>
     <el-form-item label="用户名" prop="username">
       <el-input v-model="user.username" placeholder="请输入用户名"></el-input>
     </el-form-item>
-    <el-form-item label="姓名" prop="phone">
-      <el-input v-model="user.name" placeholder="请输入姓名"></el-input>
-    </el-form-item>
-    <el-form-item label="岗位名称" prop="phone">
+    <el-form-item label="岗位名称" prop="post">
       <el-input v-model="user.post" placeholder="请输入岗位名称"></el-input>
     </el-form-item>
     <el-form-item label="密码" prop="password">

@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -35,5 +37,26 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     @Override
     public boolean updateDishId(int dishId,int quantity) {
         return cartMapper.updateDishId(dishId, quantity);
+    }
+
+    @Override
+    public List<Cart> selectAll() {
+        return cartMapper.selectAll();
+    }
+
+    @Override
+    public List<Cart> selectQuantity(int dishId) {
+        return  cartMapper.selectQuantity(dishId);
+    }
+
+
+    @Override
+    public boolean deleteByDishId(int dishId) {
+        return cartMapper.deleteByDishId(dishId);
+    }
+
+    @Override
+    public List<Cart> selectAllByTableId(int tableId) {
+        return cartMapper.selectAllByTableId(tableId);
     }
 }

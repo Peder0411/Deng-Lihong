@@ -1,5 +1,6 @@
 package com.practice.mapper;
 
+import com.practice.entity.OrderDetail;
 import com.practice.entity.OrderTableInfoDTO;
 import com.practice.entity.Orders;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -27,5 +28,7 @@ public interface OrdersMapper extends BaseMapper<Orders> {
 
     public boolean insertConditions(@Param("tableId") Integer tableId, @Param("peopleCount") int peopleCount);
 
-    Integer selectByTableId (@Param("tableId") int tableId);
+   Integer insertAll(Orders orders);
+
+   public boolean updateBy(Orders orders);
 }

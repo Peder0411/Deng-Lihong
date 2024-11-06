@@ -2,6 +2,9 @@ package com.practice.service;
 
 import com.practice.entity.TableInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ITableInfoService extends IService<TableInfo> {
 
+    int updeteByTableId( int tableNumber);
+
+    List<TableInfo> selectAllByConditions(TableInfo tableInfo);
 }

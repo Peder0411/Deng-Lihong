@@ -5,6 +5,7 @@ import com.practice.common.result.ResultUtils;
 import com.practice.entity.OrderTableInfoDTO;
 import com.practice.entity.Orders;
 import com.practice.service.IOrdersService;
+import com.practice.service.ITableInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,8 @@ public class OrdersController {
     @Autowired
     private IOrdersService iOrdersService;
 
+    @Autowired
+    private ITableInfoService iTableInfoService;
 
     //查询订单
     @GetMapping("/getAll")
@@ -50,7 +53,7 @@ public class OrdersController {
     }
     //结账
     @PutMapping("/updateStatus")
-    public Object updateStatus(@RequestParam int id) {
+    public Object updateStatus(@RequestParam int id, @RequestParam int tableNumber) {
         // 查询订单
         Orders orders = iOrdersService.getById(id);
         // 如果订单不存在，返回错误信息
@@ -59,9 +62,25 @@ public class OrdersController {
         }
         // 更新订单状态
         orders.setStatus(1);
+       int flag1=iTableInfoService.updeteByTableId(tableNumber);
         boolean flag = iOrdersService.updateById(orders);
 
         // 返回更新结果
+        if (flag1 >0) {
+            return ResultUtils.returnDataSuccess(flag);
+        }
+        return false;
+    }
+
+    @PostMapping("/saveAll")
+        public Object saveAll(@RequestBody Orders orders){
+         boolean flag = iOrdersService.saveAll(orders);
+         return  ResultUtils.returnDataSuccess(flag);
+    }
+
+    @PutMapping("/updateBy")
+    public Object updateBy(@RequestBody Orders orders){
+        boolean flag = iOrdersService.updateBy(orders);
         return ResultUtils.returnDataSuccess(flag);
     }
 

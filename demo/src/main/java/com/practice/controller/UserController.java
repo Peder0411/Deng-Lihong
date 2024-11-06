@@ -87,6 +87,12 @@ public Object sendMail(@RequestBody Map<String, String> sendData) {
         boolean flag = iUserService.save(user);
         return ResultUtils.returnDataSuccess(flag);
     }
+    //修改
+    @PutMapping("/update")
+    public Object update (@RequestBody User user){
+        boolean flag =iUserService.updateById(user);
+        return ResultUtils.returnDataSuccess(flag);
+    }
     //监控员工状态
     @PutMapping("/updateById")
     public Object updateById(@RequestParam int id, @RequestParam String  status) {

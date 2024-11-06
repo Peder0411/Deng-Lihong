@@ -35,9 +35,12 @@ public class DishController {
     private IDishService iDishService;
 
 
+
+
+
     @GetMapping("/getAllDish")
     public Object getAllDish(){
-        List<Dish> list=iDishService.list();
+        List<Dish> list=iDishService.selectByStatus();
         return ResultUtils.returnDataSuccess(list);
     }
 
@@ -92,7 +95,7 @@ public class DishController {
 
 
     //删除菜单
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete")
     public Object deleteDish(@PathVariable int id){
         boolean flag =iDishService.removeById(id);
         return ResultUtils.returnDataSuccess(flag);
@@ -115,6 +118,13 @@ public class DishController {
         } else {
             return false;
         }
+    }
+
+    //Echars专用
+    @GetMapping("/gitAllDish")
+    public Object gitAllDish(){
+        List<Dish> list=iDishService.list();
+        return ResultUtils.returnDataSuccess(list);
     }
 }
 

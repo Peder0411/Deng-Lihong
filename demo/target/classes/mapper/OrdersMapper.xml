@@ -5,6 +5,22 @@
         INSERT INTO Orders (table_id, people_count)
         VALUES (#{tableId}, #{peopleCount})
           </insert>
+    <insert id="insertAll" useGeneratedKeys="true" keyProperty="id">
+        insert  into orders (table_id,total_amount,people_count ,status,order_time,notes)
+        values (#{tableId}, #{totalAmount},#{peopleCount} ,#{status},#{orderTime},#{notes})
+
+    </insert>
+    <update id="updateBy">
+        UPDATE orders
+        SET
+            waiter = #{waiter},
+            payment_time = #{paymentTime},
+            completion_time = #{completionTime}
+        WHERE
+            table_id = #{tableId};
+
+    </update>
+
 
     <select id="selectAll" resultType="com.practice.entity.OrderTableInfoDTO">
         SELECT
@@ -56,7 +72,6 @@
           AND t.table_number = #{orderTableInfoDTO.tableNumber};
 
     </select>
-    <select id="selectByTableId" resultType="java.lang.Integer">
-        select * from orders where table_id= #{tableId}
-    </select>
+
+
 </mapper>

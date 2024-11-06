@@ -21,7 +21,6 @@
           <el-button type="primary" @click="search">查询</el-button>
         </el-col>
       </el-row>
-
       <!-- 表格 -->
       <el-table :data="dishes" stripe style=" margin-top: 20px;">
         <el-table-column prop="id" label="编号" width="70"></el-table-column>
@@ -53,10 +52,9 @@
         </el-table-column>
 
         <!-- 操作列 -->
-        <el-table-column label="操作" width="210" align="center">
+        <el-table-column label="操作" width="130" align="center">
   <template slot-scope="scope">
     <div style="display: flex; gap: 4px;">
-      <el-button type="success" size="mini" @click="handleView(scope.row)">查看</el-button>
       <el-button type="warning" size="mini" @click="handleEdit(scope.row)">编辑</el-button>
       <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
     </div>
@@ -165,17 +163,27 @@ axios.post(`http://localhost:80/dish/selectDish?page=${this.currentPage}&limit=$
       this.currentPage = page;
       this.selectAllDish();
     },
-  view(row) {
-    // eslint-disable-next-line
-    console.log("查看", row);
-  },
   edit(row) {
     // eslint-disable-next-line
     console.log("编辑", row);
   },
   deleteDish(row) {
-    // eslint-disable-next-line
-    console.log("删除", row);
+    axios.delete(`http://localhost:80/dish/delete?id=${row.id}`)
+      .then((res) => {
+        if (res.data.code === "200") {
+          this.selectAllDish();
+          this.$message({
+            message: '成功',
+            type: 'success'
+          });
+        
+        } else {
+          this.$message({
+            message: '失败',
+            type: 'error'
+          });
+        }
+      });
   },
   handleStatusChange(row) {
     this.dishes.id = row.id;

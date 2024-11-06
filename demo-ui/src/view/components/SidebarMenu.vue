@@ -15,7 +15,7 @@
       <el-submenu index="4">
         <template slot="title">台桌管理</template>
         <el-menu-item index="4-1" @click="goToTableManagement">台桌设置</el-menu-item>
-        <el-menu-item index="4-2">桌型管理</el-menu-item>
+        <el-menu-item index="4-2" @click="goToAddTable">新建台桌</el-menu-item>
         <el-menu-item index="4-3">台桌设置</el-menu-item>
       </el-submenu>
       <el-submenu index="5">
@@ -26,7 +26,7 @@
       <el-submenu index="6">
         <template slot="title">订单管理</template>
         <el-menu-item index="6-1" @click="goToOrderManagement">订单列表</el-menu-item>
-        <el-menu-item index="6-2">订单统计</el-menu-item>
+        <el-menu-item index="6-2" @click="goToDishChart">订单统计</el-menu-item>
       </el-submenu>
     </el-menu>
   </template>
@@ -83,9 +83,23 @@
   } else {
     this.$router.push('/AddUser');
   }
+    },
+    goToAddTable(){
+      if (this.$route.path === '/AddTable') {
+    this.$forceUpdate();
+  } else {
+    this.$router.push('/AddTable');
+  }
+    },
+    goToDishChart(){
+      if (this.$route.path === '/DishChart') {
+    this.$forceUpdate();
+  } else {
+    this.$router.push('/DishChart');
     }
   }
-}
+    }
+  }
   </script>
   
   <style scoped>

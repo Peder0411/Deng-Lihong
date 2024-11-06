@@ -8,7 +8,8 @@ import loginPage from '@/view/components/loginPage.vue';
 import AddDish from '@/view/components/AddDish.vue';
 import IOrderManagement from '@/view/components/IOrderManagement.vue';
 import AddUser from '@/view/components/AddUser.vue';
-
+import AddTable from '@/view/components/AddTable.vue';
+import DishChart from '@/view/components/DishChart.vue';
 Vue.use(VueRouter);
 
 const routes = [
@@ -61,6 +62,18 @@ const routes = [
     path: '/AddUser',
     name: 'AddUser',
     component: AddUser,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/AddTable',
+    name: 'AddTable',
+    component: AddTable,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/DishChart',
+    name: 'DishChart',
+    component: DishChart,
     meta: { requiresAuth: true }
   }
 ];

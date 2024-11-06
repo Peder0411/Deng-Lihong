@@ -24,5 +24,7 @@ public interface IOrdersService extends IService<Orders> {
 
     public boolean insertConditions(Integer tableId, int peopleCount);
 
-    Integer selectByTableId(int tableId);
+
+    boolean saveAll(Orders orders);
+    public boolean updateBy(Orders orders);
 }

@@ -42,9 +42,23 @@ public class OrderDetail implements Serializable {
 
     private Integer quantity;
 
+    @TableField(exist = false)
+    private String  status;
 
     @TableField(exist = false)
     private  Integer tableId;
+
+    @TableField(exist = false)
+    private String dishKind;
+
+    @TableField(exist = false)
+    private String dishOriginalPrice;
+
+    @TableField(exist = false)
+    private String totalAmount;
+
+    @TableField(exist = false)
+    private String orderTime;
 
 
 }

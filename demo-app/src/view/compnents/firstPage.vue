@@ -20,10 +20,10 @@
           <el-button class="quick-button" type="success">优惠券</el-button>
         </el-col>
         <el-col :span="12">
-          <el-button class="quick-button" type="success">排队取号</el-button>
+          <el-button class="quick-button" type="success" @click="goToOrders">我的订单</el-button>
         </el-col>
         <el-col :span="12">
-          <el-button class="quick-button" type="warning" @click="goToTableReservation ">餐桌预约</el-button>
+          <el-button class="quick-button" type="warning" @click="goToTableReservation ">开始点餐</el-button>
         </el-col>
       </el-row>
     </div>
@@ -59,6 +59,9 @@ export default {
    * 
    */
    methods: {
+    goToOrders(){
+      this.$router.push({ path: '/OrderManagement' });
+    },
     goToTableReservation() {
   console.log('当前路径:', this.$route.path); // 添加日志输出
   if (this.$route.path !== '/TableReservation') {
@@ -109,6 +112,21 @@ export default {
 </script>
 
 <style>
+.shop-info {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background-color: #fff;
+  margin-top: 8px;
+}
+
+.shop-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-right: 16px;
+}
+
 .status-on {
   color: green;
 }

@@ -2,4 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.practice.mapper.TableInfoMapper">
 
+    <update id="updeteByTableId" parameterType="int">
+        UPDATE table_info set `status`=0 WHERE table_number=#{tableNumber}
+    </update>
+    <select id="selectAllByConditions" resultType="com.practice.entity.TableInfo">
+        select * from table_info where
+        table_address=#{tableAddress} AND
+        table_number =#{tableNumber} AND
+        status =#{status}
+    </select>
 </mapper>
