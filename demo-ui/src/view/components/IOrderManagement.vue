@@ -99,10 +99,6 @@
         <el-button type="primary" @click="saveEdit">保存</el-button>
       </div>
     </el-dialog>
-
-
-
-
         <!-- 查看订单详情弹窗 -->
         <el-dialog title="订单详情" :visible.sync="orderDetailsDialogVisible">
       <el-table :data="orderDetails" style="width: 100%">

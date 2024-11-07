@@ -76,7 +76,7 @@ public class DishController {
     @PostMapping("/selectDish")
     public Object selectDish(@RequestParam Integer page, @RequestParam Integer limit,@RequestBody Map<String, String> selectConditions) {
         String dishName =selectConditions.get("dishName");
-        String kind = selectConditions.get("kind");
+        String status = selectConditions.get("status");
 
         IPage <Dish> p =new Page(page,limit);
 
@@ -84,8 +84,8 @@ public class DishController {
         if (dishName != null && !dishName.isEmpty()) {
             queryWrapper.eq(Dish::getDishName, dishName);
         }
-        if (kind != null && !kind.isEmpty()) {
-            queryWrapper.eq(Dish::getKind, kind);
+        if (status != null && !status.isEmpty()) {
+            queryWrapper.eq(Dish::getStatus, status);
         }
         IPage <Dish> res = iDishService.page(p,queryWrapper);
         List  <Dish> list =res.getRecords();
@@ -99,6 +99,12 @@ public class DishController {
     public Object deleteDish(@PathVariable int id){
         boolean flag =iDishService.removeById(id);
         return ResultUtils.returnDataSuccess(flag);
+    }
+    //根据Id查询
+    @GetMapping("/getById/{id}")
+    public Object getById(@PathVariable int id){
+        Dish dish = iDishService.getById(id);
+        return ResultUtils.returnDataSuccess(dish);
     }
     //修改菜单
     @PutMapping("/update")

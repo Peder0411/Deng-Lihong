@@ -5,6 +5,9 @@
     <update id="updeteByTableId" parameterType="int">
         UPDATE table_info set `status`=0 WHERE table_number=#{tableNumber}
     </update>
+    <update id="updateStatus">
+        UPDATE table_info set `status`=1 WHERE id=#{tableId}
+    </update>
     <select id="selectAllByConditions" resultType="com.practice.entity.TableInfo">
         select * from table_info where
         table_address=#{tableAddress} AND

@@ -8,7 +8,7 @@
           <el-input v-model="filters.name" placeholder="菜品名称"></el-input>
         </el-col>
         <el-col :span="8">
-          <el-select v-model="filters.category" placeholder="请选择菜品分类">
+          <el-select v-model="filters.category" placeholder="请选择状态">
             <el-option
               v-for="item in categories"
               :key="item.value"
@@ -21,6 +21,51 @@
           <el-button type="primary" @click="search">查询</el-button>
         </el-col>
       </el-row>
+
+
+
+       <!-- 编辑弹窗 -->
+       <el-dialog :visible.sync="editDialogVisible" title="编辑菜品">
+        <el-form :model="editForm">
+          <el-form-item label="菜品图片">
+            <el-upload
+              class="upload-demo"
+              action="http://127.0.0.1:5000/upload"
+              list-type="picture-card"
+              :on-remove="removeImage"
+              :on-success="handleUploadSuccess"
+            >
+              <img v-if="editForm.image" :src="editForm.image" class="dish-image" />
+              <i v-else class="el-icon-plus"></i>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="描述">
+            <el-input v-model="editForm.kind"></el-input>
+          </el-form-item>
+          <el-form-item label="菜品名称">
+            <el-input v-model="editForm.dishName"></el-input>
+          </el-form-item>
+          <el-form-item label="价格">
+            <el-input v-model="editForm.price" type="number"></el-input>
+          </el-form-item>
+          <el-form-item label="原价">
+            <el-input v-model="editForm.originalPrice" type="number"></el-input>
+          </el-form-item>
+          <el-form-item label="折扣">
+            <el-input v-model="editForm.discount"></el-input>
+          </el-form-item>
+          <el-form-item label="月销售">
+            <el-input v-model="editForm.soldPerMonth" type="number"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="editDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="confirmEdit">确认</el-button>
+        </span>
+      </el-dialog>
+
+
+
       <!-- 表格 -->
       <el-table :data="dishes" stripe style=" margin-top: 20px;">
         <el-table-column prop="id" label="编号" width="70"></el-table-column>
@@ -80,13 +125,24 @@ export default {
   name:'dishItem',
   data() {
     return {
+      editDialogVisible: false,
+      editForm: {
+        id: null,
+        image: '',
+        kind: '',
+        dishName: '',
+        price: '',
+        originalPrice: '',
+        discount: '',
+        soldPerMonth: ''
+      },
       filters: {
         name: '',
         category: ''
       },
       categories: [
-        { value: '热菜', label: '热菜' },
-        { value: '凉菜', label: '凉菜' },
+        { value: '1', label: '上架' },
+        { value: '0', label: '下架' },
         // 更多分类
       ],
       dishes: [
@@ -99,6 +155,42 @@ export default {
     }
   },
   methods: {
+    confirmEdit(){
+      if (!this.editForm.dishName || !this.editForm.price) {
+    this.$message.error('请填写所有必填项');
+    return;
+  }
+
+  // 发送 PUT 请求更新菜品信息
+  axios.put('http://localhost:80/dish/update', this.editForm, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then((res) => {
+    if (res.data.code === "200") {
+      this.selectAllDish(); // 更新菜品列表
+      this.editDialogVisible = false; // 关闭弹窗
+      this.$message({
+        message: '修改成功',
+        type: 'success'
+      });
+    } else {
+      this.$message.error('修改失败');
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+    this.$message.error('修改失败');
+  });
+
+    },
+    handleUploadSuccess(response, file) {
+      this.editForm.image = URL.createObjectURL(file.raw);
+    },
+    removeImage() {
+      this.editForm.image = '';
+    },
     //查询所有菜品
     selectAllDish() {
       const params ={
@@ -129,7 +221,7 @@ export default {
 search() {
       const selectData = {
     dishName: this.filters.name,
-    kind: this.filters.category
+    status: this.filters.category
   }
 axios.post(`http://localhost:80/dish/selectDish?page=${this.currentPage}&limit=${this.pageSize}`, 
     selectData, 
@@ -163,9 +255,18 @@ axios.post(`http://localhost:80/dish/selectDish?page=${this.currentPage}&limit=$
       this.currentPage = page;
       this.selectAllDish();
     },
-  edit(row) {
-    // eslint-disable-next-line
-    console.log("编辑", row);
+    handleEdit(row) {
+      this.editDialogVisible = true
+      axios.get(`http://localhost:80/dish/getById/${row.id}`)
+        .then((res) => {
+          if (res.data.code === "200") {
+            const dish = res.data.data;
+            this.editForm = { ...dish };
+            this.fileList = dish.image ? [{ name: 'image.jpg', url: dish.image }] : [];
+          } else {
+            this.$message.error('获取菜品详情失败');
+          }
+        });
   },
   deleteDish(row) {
     axios.delete(`http://localhost:80/dish/delete?id=${row.id}`)

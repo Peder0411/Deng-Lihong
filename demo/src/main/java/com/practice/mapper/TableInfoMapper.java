@@ -20,4 +20,6 @@ public interface TableInfoMapper extends BaseMapper<TableInfo> {
     int updeteByTableId(@Param("tableNumber") int tableNumber);
 
     List<TableInfo> selectAllByConditions(TableInfo tableInfo);
+
+    public boolean updateStatus(@Param("tableId") int tableId);
 }

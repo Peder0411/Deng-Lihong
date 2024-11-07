@@ -31,4 +31,9 @@ public class TableInfoServiceImpl extends ServiceImpl<TableInfoMapper, TableInfo
     public List<TableInfo> selectAllByConditions(TableInfo tableInfo) {
         return tableInfoMapper.selectAllByConditions(tableInfo);
     }
+
+    @Override
+    public boolean updateStatus(int tableId) {
+        return tableInfoMapper.updateStatus(tableId);
+    }
 }

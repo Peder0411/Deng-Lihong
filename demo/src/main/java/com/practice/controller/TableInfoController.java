@@ -90,6 +90,9 @@ public class TableInfoController {
        List <TableInfo> list = iTableService.selectAllByConditions(tableInfo);
         return ResultUtils.returnDataSuccess(list);
     }
-
-
+    @PutMapping("/update")
+    public  Object update (@RequestParam int tableId){
+        boolean flag = iTableService.updateStatus(tableId);
+        return ResultUtils.returnDataSuccess(flag);
+    }
 }

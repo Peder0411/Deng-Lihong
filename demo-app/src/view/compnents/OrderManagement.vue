@@ -1,54 +1,61 @@
 <template>
-    <div class="container">
-      <div class="order-page">
-        <div class="shop-info">
-      <img src="https://s2.loli.net/2024/10/30/tBZ5912kiNfUQDL.png"  class="shop-logo" />
-      <div class="shop-details">
-        <h3>美滋滋汉堡</h3>
-        <p>188 8888 8888</p>
-        <el-button size="mini" type="success">营业中</el-button>
+  <div class="container">
+    <div class="order-page">
+      <div class="shop-info">
+        <img src="https://s2.loli.net/2024/10/30/tBZ5912kiNfUQDL.png" class="shop-logo" />
+        <div class="shop-details">
+          <h3>美滋滋汉堡</h3>
+          <p>188 8888 8888</p>
+          <el-button size="mini" type="success">营业中</el-button>
+        </div>
       </div>
-    </div>
-        <el-card class="order-card" v-for="(order, index) in orders" :key="index">
-          <div class="order-header">
-            <div class="store-info">            
+      
+      <el-card class="order-card" v-for="(order, index) in orders" :key="index">
+        <div class="order-header">
+          <div class="store-info">
             <span class="icon">🐰</span>
             <span class="store-name">{{ order.storeName || '李子馆·辣炒鸡煲（万达金街店）' }}</span>
           </div>
           <span class="order-status" :class="{ 'status-complete': order.status === '已完成', 'status-in-progress': order.status === '进行中' }">
-  {{ order.status }} <!-- 添加 {{ order.status }} 来调试 -->
-</span>
-
+            {{ order.status }}
+          </span>
         </div>
-          
-          <div class="dish-images">
-            <el-image
-              v-for="(dish, dishIndex) in order.dishes"
-              :key="dishIndex"
-              :src="dish.dishImage"
-              class="dish-image"
-              fit="cover"
-            ></el-image>
+        
+        <div class="dish-images">
+          <el-image
+            v-for="(dish, dishIndex) in order.dishes"
+            :key="dishIndex"
+            :src="dish.dishImage"
+            class="dish-image"
+            fit="cover"
+          ></el-image>
+        </div>
+        
+        <div class="order-details">
+          <div class="order-time">下单：{{ order.orderTime }}</div>
+          <div class="order-info">
+            <span class="order-price">¥{{ order.totalAmount }}</span>
+            <span class="order-quantity">共 {{ order.totalQuantity }} 件</span>
           </div>
-          
-          <div class="order-details">
-            <div class="order-time">下单：{{ order.orderTime }}</div>
-            <div class="order-info">
-              <span class="order-price">¥{{ order.totalAmount }}</span>
-              <span class="order-quantity">共 {{ order.totalQuantity }} 件</span>
-            </div>
-          </div>
-          
-          <div class="order-actions">
-            <el-button type="text" class="action-button">更多</el-button>
-            <el-button type="text" class="action-button">保险服务</el-button>
-            <el-button type="text" class="action-button">领神券</el-button>
-            <el-button type="primary" plain class="action-button">再来一单</el-button>
-          </div>
-        </el-card>
-      </div>
+        </div>
+        
+        <div class="order-actions">
+          <el-button type="text" class="action-button">更多</el-button>
+          <el-button type="text" class="action-button">保险服务</el-button>
+          <el-button type="text" class="action-button">领神券</el-button>
+          <el-button type="primary" plain class="action-button">再来一单</el-button>
+        </div>
+      </el-card>
     </div>
-  </template>
+
+    <!-- 底部返回按钮 -->
+    <div class="footer-button">
+      <el-button @click="goBack" type="primary" icon="el-icon-arrow-left">
+        返回
+      </el-button>
+    </div>
+  </div>
+</template>
   
   <script>
   import axios from 'axios';
@@ -59,8 +66,13 @@
         orders: [],
         selectedTableId: null,
       };
+      
     },
- 
+   methods: {
+    goBack() {
+      this.$router.back();
+    }
+  },
     created() {
         const selectedTableId = localStorage.getItem('selectedTableId');
   if (selectedTableId) {
@@ -80,7 +92,7 @@
                 // 如果没有这个订单 ID，创建一个新的订单对象
                 ordersMap[orderId] = {
                   storeName: '美滋滋汉堡',
-                  status: item.status === "0" ? '已完成' : '进行中', 
+                  status: item.status === "1" ? '已完成' : '进行中', 
                   orderTime: item.orderTime,
                   totalAmount: item.totalAmount,
                   totalQuantity: 0,
@@ -114,6 +126,13 @@
   
   
   <style scoped>
+  .footer-button {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
   .order-status {
   font-size: 14px;
   font-weight: bold;

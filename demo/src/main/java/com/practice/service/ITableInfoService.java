@@ -19,4 +19,6 @@ public interface ITableInfoService extends IService<TableInfo> {
     int updeteByTableId( int tableNumber);
 
     List<TableInfo> selectAllByConditions(TableInfo tableInfo);
+
+    public boolean updateStatus(@Param("tableId") int tableId);
 }

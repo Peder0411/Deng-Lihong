@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <v-chart :option="chartOptions" style="width: 600px; height: 400px;"></v-chart>
+  <div class="chart-container">
+    <v-chart :option="chartOptions" class="chart" style="height: 400px;"></v-chart>
+    <v-chart :option="revenueChartOptions" class="chart" style="height: 400px;"></v-chart>
   </div>
 </template>
 
@@ -34,24 +35,43 @@ export default {
             data: [] // 用于存储每月销量
           }
         ]
+      },
+      revenueChartOptions: {
+        title: {
+          text: '每天营业额统计'
+        },
+        tooltip: {},
+        xAxis: {
+          type: 'category',
+          data: [] // 存储日期
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            name: '营业额',
+            type: 'line',
+            data: [] // 存储每日营业额数据
+          }
+        ]
       }
     };
   },
+
   mounted() {
     this.fetchDishData();
+    this.fetchAndAggregateOrders();
   },
   methods: {
     async fetchDishData() {
       try {
-        // 从后端获取数据
         const response = await axios.get('http://localhost:80/dish/gitAllDish');
         if (response.data.code === "200") {
           const dishData = response.data.data;
-          // 提取菜品名称和销量数据
           const dishNames = dishData.map(dish => dish.dishName);
           const soldData = dishData.map(dish => dish.soldPerMonth);
 
-          // 更新 chartOptions 数据，使图表重新渲染
           this.chartOptions = {
             ...this.chartOptions,
             xAxis: {
@@ -71,9 +91,64 @@ export default {
       } catch (error) {
         console.error("请求失败:", error);
       }
+    },
+    async fetchAndAggregateOrders() {
+      try {
+        const response = await axios.get('http://localhost/orders/getAll?page=1&limit=10');
+        if (response.data.code === "0") {
+          const orders = response.data.data;
+          this.aggregateRevenueByDate(orders);
+        } else {
+          console.error("获取数据失败:", response.data.msg);
+        }
+      } catch (error) {
+        console.error("请求失败:", error);
+      }
+    },
+    aggregateRevenueByDate(orders) {
+      const dailyRevenue = {};
+
+      orders.forEach(order => {
+        const date = order.orderTime.split(' ')[0];
+        if (!dailyRevenue[date]) {
+          dailyRevenue[date] = 0;
+        }
+        dailyRevenue[date] += order.totalAmount;
+      });
+
+      const dates = Object.keys(dailyRevenue);
+      const revenueData = Object.values(dailyRevenue);
+
+      this.revenueChartOptions = {
+        ...this.revenueChartOptions,
+        xAxis: {
+          ...this.revenueChartOptions.xAxis,
+          data: dates
+        },
+        series: [
+          {
+            ...this.revenueChartOptions.series[0],
+            data: revenueData
+          }
+        ]
+      };
     }
   }
 };
 </script>
 
-  
+<style scoped>
+.chart-container {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  gap: 20px; /* 图表之间的间距 */
+  height: 100vh; /* 使容器高度占满屏幕 */
+}
+
+.chart {
+  flex: 1;
+  max-width: 600px; /* 限制每个图表的最大宽度 */
+  height: 400px;
+}
+</style>
